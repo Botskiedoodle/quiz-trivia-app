@@ -1,21 +1,25 @@
-<script setup>
-import { NButton, NSpace } from 'naive-ui'
-</script>
 
-<template>
   <!-- <div>
     <router-link to="/">Home</router-link> |
     <router-link to="/quiz">Quiz</router-link> |
     <router-link to="/achievements">Achievements</router-link>
+    
   </div> -->
-  <div class="main">
-    <div class="app">
-      <router-view></router-view>
-    </div>
-
-  </div>
+<template>
+  <n-message-provider>
+    <n-dialog-provider>
+      <div class="main">
+        <div class="app">
+          <router-view></router-view>
+        </div>
+      </div>
+    </n-dialog-provider>
+  </n-message-provider>
 </template>
+<script setup>
+import { NDialogProvider, NMessageProvider } from 'naive-ui';
 
+</script>
 <style scoped>
 /* 
 Bright Yellow (Primary Color):
@@ -31,14 +35,17 @@ HSL: hsl(330, 100%, 54%) */
 .main {
   display: grid;
   place-items: center;
-  height: 100dvh
+  height: 100vh;
+
 }
 
 .main .app {
-  min-height: 70dvh;
-  min-width: 70dvh;
+  height: 70dvh;
+  width: 70dvh;
   border-radius: 10px;
   background-color: hsl(180, 100%, 40%);
+  padding: 2rem;
+
 }
 </style>
 <style>
