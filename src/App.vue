@@ -6,18 +6,24 @@
     
   </div> -->
 <template>
-  <n-message-provider>
-    <n-dialog-provider>
-      <div class="main">
-        <div class="app">
-          <router-view></router-view>
+  <div>
+    <n-message-provider>
+      <n-dialog-provider>
+        <div class="main">
+          <div class="app">
+            <router-view></router-view>
+          </div>
         </div>
-      </div>
-    </n-dialog-provider>
-  </n-message-provider>
+      </n-dialog-provider>
+    </n-message-provider>
+    <particles />
+  </div>
 </template>
 <script setup>
 import { NDialogProvider, NMessageProvider } from 'naive-ui';
+import Particles from '@/components/particles.vue'
+
+
 
 </script>
 <style scoped>
@@ -36,14 +42,16 @@ HSL: hsl(330, 100%, 54%) */
   display: grid;
   place-items: center;
   height: 100vh;
+  position: relative;
+  z-index: 10;
 
 }
 
 .main .app {
-  height: 70dvh;
+  /* height: 70dvh; */
   width: 70dvh;
   border-radius: 10px;
-  background-color: hsl(180, 100%, 40%);
+  background-color: hsl(50, 100%, 50%);
   padding: 2rem;
 
 }
@@ -52,7 +60,8 @@ HSL: hsl(330, 100%, 54%) */
 @import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
 
 body {
-  background-color: hsl(50, 100%, 50%);
+  background-color: hsl(180, 100%, 40%);
+
   font-family: 'Pangolin', cursive;
 }
 </style>

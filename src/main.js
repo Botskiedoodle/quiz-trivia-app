@@ -1,12 +1,15 @@
 import { createApp } from 'vue'
 // import './style.css'
-import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
+import Particles from 'vue3-particles'
+import { createRouter, createWebHistory } from 'vue-router'
 
 import HomePage from '@/views/homePage.vue'
 import AchievementsPage from '@/views/achievementsPage.vue'
 import QuizPage from '@/views/quizPage.vue'
-
+import FinishQuiz from '@/views/finish.vue'
+import { createPinia } from 'pinia'
+const pinia = createPinia()
 
 const router = createRouter({
   history: createWebHistory(),
@@ -19,10 +22,15 @@ const router = createRouter({
     },
     {
       path: '/quiz', name: 'Quiz', component: QuizPage
+    },
+    {
+      path: '/quiz-finished', name: 'Finish', component: FinishQuiz
     }
   ]
 })
 
 createApp(App)
   .use(router)
+  .use(Particles)
+  .use(pinia)
   .mount('#app')

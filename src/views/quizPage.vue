@@ -1,23 +1,41 @@
 <template>
-  <div v-for="(quizItem, questionIndex) in quiz.content" :key="quizItem.question"
-    v-show="quiz.answered === questionIndex">
-    <div v-html="quizItem.question" style="font-size: 1.5rem;"></div>
-    <div class="answers">
-      <div v-for="answer in quizItem.answers" :key="answer" @click="pickAnswer(quizItem.correct_answer, answer)">
-        <n-button type="info" class="button"> {{ answer }}</n-button>
+  <div class="main-quiz">
+    <div v-if="quiz.content.length === 0">
+      Loading...
+    </div>
+    <div v-else>
+      <header style="font-size: x-large; font-weight: bold; padding: 0 0 1rem 0;">
+        Question {{ quiz.answered + 1 }} of {{ quiz.content.length }}
+      </header>
+
+      <div v-for="(quizItem, questionIndex) in quiz.content" :key="quizItem.question" style="text-align: center;"
+        v-show="quiz.answered === questionIndex">
+        <div style="font-size: 1.5rem;">{{ quizItem.question }}</div>
+        <div class="answers">
+          <div v-for="answer in quizItem.answers" :key="answer" @click="pickAnswer(quizItem.correct_answer, answer)">
+            <n-button type="info" class="button"> {{ answer }}</n-button>
+          </div>
+        </div>
       </div>
+      <result-modal :visible="modal.visible" @proceed="nextQuestion" :status="modal.status" :title="modal.title" />
     </div>
   </div>
 </template>
 <script setup>
-import { NButton, useDialog, useMessage } from 'naive-ui'
+import { NButton, useDialog } from 'naive-ui'
 import { reactive, onMounted } from 'vue'
-
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 
+import { useQuizStore } from '@/store/quiz.js'
+const quizStore = useQuizStore()
+
+import ResultModal from '@/components/modal.vue'
+
+const router = useRouter()
 
 const dialog = useDialog()
-const message = useMessage()
+
 
 const pickAnswer = (correctAnswer, userAnswer) => {
   dialog.warning({
@@ -26,16 +44,39 @@ const pickAnswer = (correctAnswer, userAnswer) => {
     positiveText: 'Yes',
     negativeText: 'Not Sure',
     onPositiveClick: () => {
-      // check if correctAnswer === userAnswer
-      // if the answer is correct, turn the button green
-      // quiz.correct++
-      // quiz.answered++
-      console.log('Handle Yes')
+      if (userAnswer === correctAnswer) {
+        modal.visible = true
+        quiz.correct++
+        quizStore.addCorrect()
+        modal.status = 'success'
+        modal.title = 'Correct!'
+      } else {
+        modal.visible = true
+        modal.status = 'error'
+        modal.title = 'Incorrect!'
+      }
+      if (quiz.answered === 10) {
+        modal.buttonText = 'Finish Quiz'
+      }
     },
     onNegativeClick: () => {
-      console.log('Handle no')
+
     }
   })
+}
+const modal = reactive({
+  visible: false,
+  status: 'success',
+  title: 'Correct!',
+  buttonText: 'Next Question'
+})
+
+const nextQuestion = () => {
+  quiz.answered++
+  if (quiz.answered === 10) {
+    router.push('/quiz-finished')
+  }
+  modal.visible = false
 }
 
 const quiz = reactive({
@@ -98,17 +139,26 @@ onMounted(() => {
 
 </script>
 <style scoped>
+.main-quiz {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
 .answers {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   margin-top: 1rem;
+  align-items: center;
 }
 
 .button {
-  width: 10rem;
+  width: 24rem;
   padding: 2rem;
   border: white 1px solid;
   margin-right: 1rem;
   margin-bottom: 1rem;
+  word-break: break-word;
 }
 </style>
