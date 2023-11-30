@@ -10,19 +10,30 @@
 
       <div v-for="(quizItem, questionIndex) in quiz.content" :key="quizItem.question" style="text-align: center;"
         v-show="quiz.answered === questionIndex">
-        <div style="font-size: 1.5rem;">{{ quizItem.question }}</div>
-        <div class="answers">
-          <div v-for="answer in quizItem.answers" :key="answer" @click="pickAnswer(quizItem.correct_answer, answer)">
-            <n-button type="info" class="button"> {{ answer }}</n-button>
+        <div style="font-size: 1.5rem; padding-bottom: .5rem;">{{ quizItem.question }}</div>
+        <div style="display: flex; align-items: center; gap: 2rem;">
+          <div class="answers">
+            <div v-for="answer in quizItem.answers" :key="answer" @click="pickAnswer(quizItem.correct_answer, answer)">
+              <n-button type="info" class="button"> {{ answer }}</n-button>
+            </div>
+          </div>
+          <div>
+            <div style="display: flex; flex-direction: column; gap: 1rem">
+              <n-result :status="result.status" size="huge"
+                style="  background-color: hsl(270, 100%, 50%); border-radius: 1rem; width: fit-content; padding: 1rem; " />
+              <n-button type="info" style="  border: white 1px solid;">{{ result.buttonText }}</n-button>
+              <!-- show lives here and controls -->
+            </div>
           </div>
         </div>
+
       </div>
-      <result-modal :visible="modal.visible" @proceed="nextQuestion" :status="modal.status" :title="modal.title" />
+
     </div>
   </div>
 </template>
 <script setup>
-import { NButton, useDialog } from 'naive-ui'
+import { NButton, useDialog, NResult } from 'naive-ui'
 import { reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
@@ -30,10 +41,12 @@ import axios from 'axios'
 import { useQuizStore } from '@/store/quiz.js'
 const quizStore = useQuizStore()
 
-import ResultModal from '@/components/modal.vue'
+// change the color of the button of the correct answer
+// if the answer is wrong, change the color of the selected answer to red and the correct answer to green
+// make all answers unclickable after answering
+// show the next question button after answering and then hide it after a new question is shown
 
 const router = useRouter()
-
 const dialog = useDialog()
 
 
@@ -45,18 +58,18 @@ const pickAnswer = (correctAnswer, userAnswer) => {
     negativeText: 'Not Sure',
     onPositiveClick: () => {
       if (userAnswer === correctAnswer) {
-        modal.visible = true
+
         quiz.correct++
         quizStore.addCorrect()
-        modal.status = 'success'
-        modal.title = 'Correct!'
+        result.status = 'success'
+        result.title = 'Correct!'
       } else {
-        modal.visible = true
-        modal.status = 'error'
-        modal.title = 'Incorrect!'
+
+        result.status = 'error'
+        result.title = 'Incorrect!'
       }
       if (quiz.answered === 10) {
-        modal.buttonText = 'Finish Quiz'
+        result.buttonText = 'Finish Quiz'
       }
     },
     onNegativeClick: () => {
@@ -64,9 +77,9 @@ const pickAnswer = (correctAnswer, userAnswer) => {
     }
   })
 }
-const modal = reactive({
-  visible: false,
-  status: 'success',
+const result = reactive({
+
+  status: '404',
   title: 'Correct!',
   buttonText: 'Next Question'
 })
@@ -76,10 +89,10 @@ const nextQuestion = () => {
   if (quiz.answered === 10) {
     router.push('/quiz-finished')
   }
-  modal.visible = false
 }
 
 const quiz = reactive({
+  isAnswered: false,
   correct: 0,
   answered: 0,
   loading: '',
