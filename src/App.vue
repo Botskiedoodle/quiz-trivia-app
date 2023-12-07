@@ -49,10 +49,10 @@ HSL: hsl(330, 100%, 54%) */
 
 .main .app {
   /* height: 70dvh; */
-  width: 70dvh;
+  /* width: 70dvh; */
   border-radius: 10px;
   background-color: hsl(50, 100%, 50%);
-  padding: 2rem;
+  padding: 3rem;
 
 }
 </style>

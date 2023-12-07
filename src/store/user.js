@@ -17,8 +17,7 @@ export const useUserStore = defineStore(
         trueOrFalse: 0,
       }
     })
-
-
+    
     const lives = ref(0)
 
     function subtractLife() {

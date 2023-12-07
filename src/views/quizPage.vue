@@ -11,18 +11,25 @@
       <div v-for="(quizItem, questionIndex) in quiz.content" :key="quizItem.question" style="text-align: center;"
         v-show="quiz.answered === questionIndex">
         <div style="font-size: 1.5rem; padding-bottom: .5rem;">{{ quizItem.question }}</div>
-        <div style="display: flex; align-items: center; gap: 2rem;">
+        <div style="display: flex; align-items: center; gap: 2rem; justify-content: center;">
           <div class="answers">
             <div v-for="answer in quizItem.answers" :key="answer" @click="pickAnswer(quizItem.correct_answer, answer)">
               <n-button type="info" class="button"> {{ answer }}</n-button>
             </div>
           </div>
           <div>
-            <div style="display: flex; flex-direction: column; gap: 1rem">
-              <n-result :status="result.status" size="huge"
-                style="  background-color: hsl(270, 100%, 50%); border-radius: 1rem; width: fit-content; padding: 1rem; " />
-              <n-button type="info" style="  border: white 1px solid;">{{ result.buttonText }}</n-button>
-              <!-- show lives here and controls -->
+            <div class="controls">
+              <n-result :status="result.status" size="huge" :title="result" />
+              <div class="user-lives">
+                <img  v-for="life in userStore.lives" :key="life" src="../assets/heart.png" width="50" alt="user life" >
+              </div>
+              <n-button 
+                type="success" 
+                style="  border: white 1px solid;" 
+                @click="nextQuestion()"
+                :disabled="quiz.notAnswered">
+              {{ result.buttonText }}
+              </n-button>
             </div>
           </div>
         </div>
@@ -38,8 +45,12 @@ import { reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
+
 import { useQuizStore } from '@/store/quiz.js'
 const quizStore = useQuizStore()
+
+import {useUserStore} from '@/store/user.js'
+const userStore = useUserStore()
 
 // change the color of the button of the correct answer
 // if the answer is wrong, change the color of the selected answer to red and the correct answer to green
@@ -58,19 +69,17 @@ const pickAnswer = (correctAnswer, userAnswer) => {
     negativeText: 'Not Sure',
     onPositiveClick: () => {
       if (userAnswer === correctAnswer) {
-
         quiz.correct++
         quizStore.addCorrect()
         result.status = 'success'
-        result.title = 'Correct!'
       } else {
-
         result.status = 'error'
-        result.title = 'Incorrect!'
+        userStore.subtractLife()
       }
-      if (quiz.answered === 10) {
-        result.buttonText = 'Finish Quiz'
-      }
+      // if (quiz.answered === 10) {
+      //   result.buttonText = 'Finish Quiz'
+      // }
+      quiz.notAnswered = false
     },
     onNegativeClick: () => {
 
@@ -78,7 +87,6 @@ const pickAnswer = (correctAnswer, userAnswer) => {
   })
 }
 const result = reactive({
-
   status: '404',
   title: 'Correct!',
   buttonText: 'Next Question'
@@ -86,13 +94,16 @@ const result = reactive({
 
 const nextQuestion = () => {
   quiz.answered++
+  quiz.notAnswered = true
+  result.status='404'
+
   if (quiz.answered === 10) {
     router.push('/quiz-finished')
   }
 }
 
 const quiz = reactive({
-  isAnswered: false,
+  notAnswered: true,
   correct: 0,
   answered: 0,
   loading: '',
@@ -148,6 +159,7 @@ const getQuiz = async (difficultyLevel) => {
 
 onMounted(() => {
   getQuiz(quiz.difficulty)
+  userStore.initializeLives()
 })
 
 </script>
@@ -173,5 +185,19 @@ onMounted(() => {
   margin-right: 1rem;
   margin-bottom: 1rem;
   word-break: break-word;
+}
+
+.controls {
+  display: flex; 
+  background-color: black;
+  flex-direction: column; 
+  gap: 1rem;
+  padding: 2rem;
+  border-radius: 1rem;
+
+}
+.user-lives {
+  display: flex;
+  gap: 1rem
 }
 </style>
