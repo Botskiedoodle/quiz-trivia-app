@@ -12,6 +12,11 @@ export const useQuizStore = defineStore(
     function addCorrect() {
       correct.value++
     }
-    return { correct, addCorrect }
+
+    function initializeQuiz() {
+      correct.value = 0
+    }
+
+    return { initializeQuiz, addCorrect, correct }
   }
 )

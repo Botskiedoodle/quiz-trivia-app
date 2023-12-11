@@ -10,38 +10,37 @@
 
       <div v-for="(quizItem, questionIndex) in quiz.content" :key="quizItem.question" style="text-align: center;"
         v-show="quiz.answered === questionIndex">
-        <div style="font-size: 1.5rem; padding-bottom: .5rem;">{{ quizItem.question }}</div>
+        <div style="font-size: 1.5rem; padding-bottom: 2rem;">{{ quizItem.question }}</div>
         <div style="display: flex; align-items: center; gap: 2rem; justify-content: center;">
           <div class="answers">
             <div v-for="answer in quizItem.answers" :key="answer" @click="pickAnswer(quizItem.correct_answer, answer)">
-              <n-button type="info" class="button"> {{ answer }}</n-button>
+              <n-button :type="buttonType(quizItem.correct_answer, answer)" class="button">
+                {{ answer }}
+              </n-button>
             </div>
           </div>
           <div>
             <div class="controls">
-              <n-result :status="result.status" size="huge" :title="result" />
+              <n-result :status="result.status" size="huge" />
               <div class="user-lives">
-                <img  v-for="life in userStore.lives" :key="life" src="../assets/heart.png" width="50" alt="user life" >
+                <img v-for="life in userStore.lives" :key="life" src="../assets/heart.png" width="50" alt="user life">
               </div>
-              <n-button 
-                type="success" 
-                style="  border: white 1px solid;" 
-                @click="nextQuestion()"
-                :disabled="quiz.notAnswered">
-              {{ result.buttonText }}
+              <n-button type="success" style="border: white 1px solid;" @click="nextQuestion()">
+                {{ result.buttonText }}
+              </n-button>
+              <n-button @click="quitQuiz" type="error" style="border: white 1px solid; ">
+                Quit
               </n-button>
             </div>
           </div>
         </div>
-
       </div>
-
     </div>
   </div>
 </template>
 <script setup>
 import { NButton, useDialog, NResult } from 'naive-ui'
-import { reactive, onMounted } from 'vue'
+import { reactive, onMounted, onUpdated, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
@@ -49,60 +48,99 @@ import axios from 'axios'
 import { useQuizStore } from '@/store/quiz.js'
 const quizStore = useQuizStore()
 
-import {useUserStore} from '@/store/user.js'
+import { useUserStore } from '@/store/user.js'
 const userStore = useUserStore()
-
-// change the color of the button of the correct answer
-// if the answer is wrong, change the color of the selected answer to red and the correct answer to green
-// make all answers unclickable after answering
-// show the next question button after answering and then hide it after a new question is shown
 
 const router = useRouter()
 const dialog = useDialog()
 
+const lifeCheck = () => {
+  if (userStore.lives === 0) {
+    router.push('/quiz-finished')
+  }
+}
+
+const buttonType = (correctAnswer, answer) => {
+  if (!quiz.notAnswered) {
+    if (answer === correctAnswer) {
+      return 'success'
+    } else if (quiz.pickedAnswer === answer) {
+      return 'error'
+    } else {
+      return 'info'
+    }
+  } else {
+    return 'info'
+  }
+}
+
 
 const pickAnswer = (correctAnswer, userAnswer) => {
-  dialog.warning({
-    title: 'Confirm Answer',
-    content: 'Is that your final answer?',
-    positiveText: 'Yes',
-    negativeText: 'Not Sure',
-    onPositiveClick: () => {
-      if (userAnswer === correctAnswer) {
-        quiz.correct++
-        quizStore.addCorrect()
-        result.status = 'success'
-      } else {
-        result.status = 'error'
-        userStore.subtractLife()
-      }
-      // if (quiz.answered === 10) {
-      //   result.buttonText = 'Finish Quiz'
-      // }
-      quiz.notAnswered = false
-    },
-    onNegativeClick: () => {
+  if (quiz.notAnswered === true) {
+    dialog.warning({
+      title: 'Confirm Answer',
+      content: 'Is that your final answer?',
+      positiveText: 'Yes',
+      negativeText: 'Not Sure',
+      onPositiveClick: () => {
+        quiz.pickedAnswer = userAnswer
+        if (userAnswer === correctAnswer) {
+          quiz.correct++
+          quizStore.addCorrect()
+          result.status = 'success'
+        } else {
+          result.status = 'error'
+          userStore.subtractLife()
+        }
 
-    }
-  })
+        if (quiz.answered === 9) {
+          result.buttonText = 'Finish Quiz'
+        }
+        quiz.notAnswered = false
+        result.buttonText = 'Next Question'
+      },
+      onNegativeClick: () => {
+
+      }
+    })
+  }
+
 }
 const result = reactive({
   status: '404',
   title: 'Correct!',
-  buttonText: 'Next Question'
+  buttonText: 'Skip Question'
 })
 
-const nextQuestion = () => {
+const proceedToNext = () => {
   quiz.answered++
   quiz.notAnswered = true
-  result.status='404'
-
+  result.status = '404'
+  result.buttonText = 'Skip Question'
   if (quiz.answered === 10) {
     router.push('/quiz-finished')
   }
 }
 
+const nextQuestion = () => {
+  if (quiz.notAnswered == true) {
+    dialog.warning({
+      title: 'Skip Question',
+      content: 'Are you sure you want to skip this question? This would cost you a life.',
+      positiveText: 'Yes',
+      negativeText: 'No',
+      onPositiveClick: () => {
+        proceedToNext()
+        userStore.subtractLife()
+      }
+    })
+  } else {
+    proceedToNext()
+  }
+}
+
 const quiz = reactive({
+  pickedAnswer: '',
   notAnswered: true,
   correct: 0,
   answered: 0,
@@ -157,47 +195,69 @@ const getQuiz = async (difficultyLevel) => {
   }
 }
 
+const quitQuiz = () => {
+  dialog.warning({
+    title: 'Quit Quiz',
+    content: 'Are you sure you want to quit this quiz and return to home screen? Your progress will not be saved.',
+    positiveText: 'Yes',
+    negativeText: 'No',
+    onPositiveClick: () => {
+      router.push('/')
+    }
+  })
+}
+
+onUpdated(() => {
+  lifeCheck()
+})
+
 onMounted(() => {
   getQuiz(quiz.difficulty)
   userStore.initializeLives()
+  quizStore.initializeQuiz()
 })
+
 
 </script>
 <style scoped>
 .main-quiz {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 50rem;
   align-items: center;
 }
 
 .answers {
+  gap: 1rem;
   display: flex;
   flex-direction: column;
-  margin-top: 1rem;
-  align-items: center;
+
 }
 
 .button {
-  width: 24rem;
+  min-width: 24rem;
   padding: 2rem;
   border: white 1px solid;
-  margin-right: 1rem;
-  margin-bottom: 1rem;
-  word-break: break-word;
+
 }
 
 .controls {
-  display: flex; 
+  display: flex;
   background-color: black;
-  flex-direction: column; 
+  flex-direction: column;
   gap: 1rem;
   padding: 2rem;
   border-radius: 1rem;
-
+  min-width: 12rem;
 }
+
 .user-lives {
   display: flex;
   gap: 1rem
+}
+
+.n-button .wrapped-text {
+  word-wrap: break-word !important;
+  width: 24rem;
 }
 </style>

@@ -1,7 +1,8 @@
 <template>
   <div>
-    <n-space justify="center">
-      <div class="home">
+
+
+    <!-- <div class="home">
         <div class="title">
           Greatest Quiz App Ever
         </div>
@@ -30,8 +31,7 @@
             </template>
           </n-button>
         </div>
-      </div>
-    </n-space>
+      </div> -->
 
   </div>
 </template>

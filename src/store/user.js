@@ -22,6 +22,7 @@ export const useUserStore = defineStore(
 
     function subtractLife() {
       lives.value--
+   
     }
 
     function initializeLives() {
