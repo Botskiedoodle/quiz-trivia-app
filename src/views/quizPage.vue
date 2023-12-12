@@ -7,11 +7,11 @@
       <header style="font-size: x-large; font-weight: bold; padding: 0 0 1rem 0;">
         Question {{ quiz.answered + 1 }} of {{ quiz.content.length }}
       </header>
-
-      <div v-for="(quizItem, questionIndex) in quiz.content" :key="quizItem.question" style="text-align: center;"
+      <div v-for="(quizItem, questionIndex) in quiz.content" :key="quizItem.question" class="app-container"
         v-show="quiz.answered === questionIndex">
-        <div style="font-size: 1.5rem; padding-bottom: 2rem;">{{ quizItem.question }}</div>
-        <div style="display: flex; align-items: center; gap: 2rem; justify-content: center;">
+        <div class="question-container">
+          {{ quizItem.question }}</div>
+        <div class="controls-container">
           <div class="answers">
             <div v-for="answer in quizItem.answers" :key="answer" @click="pickAnswer(quizItem.correct_answer, answer)">
               <n-button :type="buttonType(quizItem.correct_answer, answer)" class="button">
@@ -19,19 +19,20 @@
               </n-button>
             </div>
           </div>
-          <div>
-            <div class="controls">
-              <n-result :status="result.status" size="huge" />
-              <div class="user-lives">
-                <img v-for="life in userStore.lives" :key="life" src="../assets/heart.png" width="50" alt="user life">
-              </div>
-              <n-button type="success" style="border: white 1px solid;" @click="nextQuestion()">
-                {{ result.buttonText }}
-              </n-button>
-              <n-button @click="quitQuiz" type="error" style="border: white 1px solid; ">
-                Quit
-              </n-button>
+          <div class="controls">
+            <div class="difficulty">
+              Difficulty: {{ quizStore.difficulty }}
             </div>
+            <n-result :status="result.status" size="huge" />
+            <div class="user-lives">
+              <img v-for="life in userStore.lives" :key="life" src="../assets/heart.png" width="50" alt="user life">
+            </div>
+            <n-button type="success" @click="nextQuestion()" class="controls-button">
+              {{ result.buttonText }}
+            </n-button>
+            <n-button @click="quitQuiz" type="error" class="controls-button">
+              Quit
+            </n-button>
           </div>
         </div>
       </div>
@@ -40,10 +41,9 @@
 </template>
 <script setup>
 import { NButton, useDialog, NResult } from 'naive-ui'
-import { reactive, onMounted, onUpdated, computed } from 'vue'
+import { reactive, onMounted, onUpdated } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-
 
 import { useQuizStore } from '@/store/quiz.js'
 const quizStore = useQuizStore()
@@ -52,6 +52,7 @@ import { useUserStore } from '@/store/user.js'
 const userStore = useUserStore()
 
 const router = useRouter()
+
 const dialog = useDialog()
 
 const lifeCheck = () => {
@@ -92,12 +93,7 @@ const pickAnswer = (correctAnswer, userAnswer) => {
           result.status = 'error'
           userStore.subtractLife()
         }
-
-        if (quiz.answered === 9) {
-          result.buttonText = 'Finish Quiz'
-        }
         quiz.notAnswered = false
-        result.buttonText = 'Next Question'
       },
       onNegativeClick: () => {
 
@@ -116,8 +112,13 @@ const proceedToNext = () => {
   quiz.answered++
   quiz.notAnswered = true
   result.status = '404'
-  result.buttonText = 'Skip Question'
-  if (quiz.answered === 10) {
+  quiz.pickedAnswer = ''
+  if (quiz.answered === quizStore.amount - 1) {
+    result.buttonText = 'Finish Quiz'
+  } else {
+    result.buttonText = 'Skip Question'
+  }
+  if (quiz.answered == quizStore.amount) {
     router.push('/quiz-finished')
   }
 }
@@ -145,11 +146,10 @@ const quiz = reactive({
   correct: 0,
   answered: 0,
   loading: '',
-  content: [],
-  difficulty: 'easy'
+  content: []
 })
 
-const apiURL = 'https://opentdb.com/api.php?amount=10&encode=base64'
+const apiURL = `https://opentdb.com/api.php?amount=${quizStore.amount}&encode=base64`
 
 const randomizedAnswers = (correctAnswer, incorrectAnswers) => {
   let incorrect_answers = incorrectAnswers
@@ -159,10 +159,10 @@ const randomizedAnswers = (correctAnswer, incorrectAnswers) => {
   return incorrect_answers
 }
 
-const getQuiz = async (difficultyLevel) => {
+const getQuiz = async () => {
   quiz.loading = true
   try {
-    await axios.get(`${apiURL}&difficulty=${difficultyLevel}`)
+    await axios.get(`${apiURL}&difficulty=${quizStore.difficulty}`)
       .then((res) => {
         let quizResponse = res.data.results
         quizResponse.forEach(obj => {
@@ -212,14 +212,14 @@ onUpdated(() => {
 })
 
 onMounted(() => {
-  getQuiz(quiz.difficulty)
+  getQuiz()
   userStore.initializeLives()
   quizStore.initializeQuiz()
 })
 
 
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .main-quiz {
   display: flex;
   flex-direction: column;
@@ -227,28 +227,83 @@ onMounted(() => {
   align-items: center;
 }
 
-.answers {
-  gap: 1rem;
-  display: flex;
-  flex-direction: column;
 
-}
 
 .button {
   min-width: 24rem;
   padding: 2rem;
   border: white 1px solid;
+  transition: .3s all;
 
+  &:hover {
+    transform: scale(1.1);
+  }
 }
+
+.app-container {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .question-container {
+    font-size: 1.5rem;
+    padding-bottom: 2rem;
+    background-color: hsl(180, 100%, 10%);
+    color: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px white solid;
+    width: 40rem;
+  }
+
+
+  .controls-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+
+    .answers {
+      gap: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background-color: hsl(180, 100%, 10%);
+      padding: 2rem;
+      border-radius: 1rem;
+      border: 1px white solid;
+      height: 20.5rem;
+    }
+  }
+}
+
+
 
 .controls {
   display: flex;
-  background-color: black;
+  background-color: hsl(180, 100%, 10%);
   flex-direction: column;
   gap: 1rem;
-  padding: 2rem;
-  border-radius: 1rem;
+  padding: 1.5rem;
   min-width: 12rem;
+  border-radius: 1rem;
+  border: 1px white solid;
+
+  .controls-button {
+    transition: .3s all;
+
+    border: white 1px solid;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  .difficulty {
+    color: white;
+    font-size: 1.5rem;
+  }
 }
 
 .user-lives {

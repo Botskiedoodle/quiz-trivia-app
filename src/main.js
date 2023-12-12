@@ -8,6 +8,7 @@ import HomePage from '@/views/homePage.vue'
 import AchievementsPage from '@/views/achievementsPage.vue'
 import QuizPage from '@/views/quizPage.vue'
 import FinishQuiz from '@/views/finish.vue'
+import notFound from '@/views/notFound.vue'
 import { createPinia } from 'pinia'
 const pinia = createPinia()
 
@@ -25,6 +26,11 @@ const router = createRouter({
     },
     {
       path: '/quiz-finished', name: 'Finish', component: FinishQuiz
+    },
+    {
+      path: '/:catchAll(.*)',
+      name: 'NotFound',
+      component: notFound
     }
   ]
 })

@@ -27,24 +27,13 @@ import Particles from '@/components/particles.vue'
 
 </script>
 <style scoped>
-/* 
-Bright Yellow (Primary Color):
-HEX: #FFD700
-HSL: hsl(50, 100%, 50%)
-Teal/Cyan (Secondary Color):
-HEX: #00CED1
-HSL: hsl(180, 100%, 40%)
-Pink/Purple (Accent Color):
-HEX: #FF1493
-HSL: hsl(330, 100%, 54%) */
-
 .main {
   display: grid;
   place-items: center;
   height: 100vh;
   position: relative;
   z-index: 10;
-
+  user-select: none;
 }
 
 .main .app {
@@ -52,8 +41,8 @@ HSL: hsl(330, 100%, 54%) */
   /* width: 70dvh; */
   border-radius: 10px;
   background-color: hsl(50, 100%, 50%);
-  padding: 3rem;
-
+  padding: 2.5rem;
+  border: .125rem black solid;
 }
 </style>
 <style>
@@ -61,7 +50,6 @@ HSL: hsl(330, 100%, 54%) */
 
 body {
   background-color: hsl(180, 100%, 40%);
-
   font-family: 'Pangolin', cursive;
 }
 </style>
