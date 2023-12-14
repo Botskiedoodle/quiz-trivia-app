@@ -6,7 +6,7 @@
     <div class="main">
       <div class="sub-main">
         <div>
-          log in to save your progress!
+          log in to earn badges!
         </div>
       </div>
       <n-divider vertical style="height: 22rem ; background-color: black;" />
@@ -118,6 +118,7 @@ const proceedWithCustom = () => {
 
 const proceedWithPreset = (preset) => {
   quizStore.difficulty = preset
+  quizStore.type = ''
   if (preset === 'easy') {
     quizStore.amount = '5'
   } else if (preset === 'medium') {

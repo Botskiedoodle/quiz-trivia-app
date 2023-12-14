@@ -1,26 +1,23 @@
 <template>
   <div>
-    <h1 style="display: grid; place-content: center;">{{ result.title }}</h1>
-    <div v-if="result.failed">
-      <iframe src="https://giphy.com/embed/B4uP3h97Hi2UaqS0E3" width="480" height="360" frameBorder="0"
-        class="giphy-embed" allowFullScreen></iframe>
+    <div v-if="gif.loading">
+      Loading...
     </div>
     <div v-else>
-      <iframe src="https://giphy.com/embed/etKSrsbbKbqwW6vzOg" width="480" height="480" frameBorder="0"></iframe>
+      <h1 style="display: grid; place-content: center;">{{ result.title }}</h1>
+      <img :src="gif.source" :width="gif.width" :height="gif.height" style="border-radius: 1rem;" />
+      <div class="result-summary">
+        <span>
+          {{ quizStore.correct }}
+        </span>
+        correct answers out of <span>{{ quizStore.amount }}</span>
+      </div>
+      <div class="controls">
+        <n-button type="success" @click="playAgain()">Play again</n-button>
+        <n-button type="info" @click="goHome()">Return to Home</n-button>
+      </div>
     </div>
-    <div class="result-summary">
-      <span v-if="result.failed">
-        Nice Try!
-      </span>
-      <span v-else>
-        Congrats!
-      </span>
-      {{ quizStore.correct }} correct answers out of {{ quizStore.amount }}
-    </div>
-    <div class="controls">
-      <n-button type="success" @click="playAgain()">Play again</n-button>
-      <n-button type="info" @click="goHome()">Return to Home</n-button>
-    </div>
+
   </div>
 </template>
 <script setup>
@@ -35,6 +32,47 @@ import { onMounted, reactive } from 'vue';
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
+import axios from 'axios'
+
+const gif = reactive({
+  height: '',
+  width: '',
+  source: '',
+  loading: true
+})
+
+const getGif = async () => {
+  let fetchedGIF = {}
+  let loseArray = ['loser', 'fail', 'trash', 'defeat', 'failure', 'flop', 'beaten', 'unsuccessful', 'disappointment', 'zero']
+  let winArray = ['winner', 'win', 'trophy', 'celebrate', 'champion', 'victor', 'triumph', 'success', 'victory', 'conqueror', 'achievement', 'accomplishment', 'prize', 'glory', 'top-notch']
+  let searchString = ''
+  if (result.failed) {
+    const randomIndex = Math.floor(Math.random() * loseArray.length)
+    searchString = loseArray[randomIndex]
+  } else {
+    const randomIndex = Math.floor(Math.random() * winArray.length)
+    searchString = winArray[randomIndex]
+  }
+  let apiURL = `https://api.giphy.com/v1/gifs/search?api_key=3N65mYWlRO6kIeRDAzf7meMhjCM04ToV&q=${searchString}&limit=50&offset=0&rating=g&lang=en&bundle=messaging_non_clips`
+  try {
+    gif.loading = true
+    await axios.get(apiURL)
+      .then((res) => {
+        const randomIndex = Math.floor(Math.random() * 50);
+        fetchedGIF = res.data.data[randomIndex].images.original
+        gif.source = fetchedGIF.url
+        gif.width = fetchedGIF.width
+        gif.height = fetchedGIF.height
+      })
+  }
+  catch (error) {
+    console.log(error)
+  }
+  finally {
+    gif.loading = false
+  }
+}
+
 const playAgain = () => {
   router.push('/quiz')
 }
@@ -42,7 +80,6 @@ const playAgain = () => {
 const goHome = () => {
   router.push('/')
 }
-
 
 const userStore = useUserStore()
 
@@ -62,6 +99,7 @@ const checkIfQuizFailed = () => {
 }
 onMounted(() => {
   checkIfQuizFailed()
+  getGif()
 })
 </script>
 <style scoped>
@@ -72,9 +110,12 @@ onMounted(() => {
 }
 
 .result-summary {
-  display: grid;
+  /* display: grid;
   place-items: center;
   grid-gap: .5rem;
+  padding: 1rem; */
+  text-align: center;
+  font-size: 1rem;
   padding: 1rem;
 }
 </style>

@@ -4,6 +4,7 @@
       Loading...
     </div>
     <div v-else>
+      {{ quiz.answered }} {{ quizStore.amount }}
       <header style="font-size: x-large; font-weight: bold; padding: 0 0 1rem 0;">
         Question {{ quiz.answered + 1 }} of {{ quiz.content.length }}
       </header>
@@ -59,8 +60,6 @@ const router = useRouter()
 
 const dialog = useDialog()
 
-
-
 const buttonType = (correctAnswer, answer) => {
   if (!quiz.notAnswered) {
     if (answer === correctAnswer) {
@@ -74,7 +73,6 @@ const buttonType = (correctAnswer, answer) => {
     return 'info'
   }
 }
-
 
 const pickAnswer = (correctAnswer, userAnswer) => {
   if (quiz.notAnswered === true) {
@@ -94,7 +92,8 @@ const pickAnswer = (correctAnswer, userAnswer) => {
           userStore.subtractLife()
         }
         quiz.notAnswered = false
-        if (userStore.lives === 0) {
+
+        if (userStore.lives === 0 || quiz.answered === quizStore.amount - 1) {
           result.buttonText = 'Finish Quiz'
         } else {
           result.buttonText = 'Next Question'
@@ -106,8 +105,8 @@ const pickAnswer = (correctAnswer, userAnswer) => {
       }
     })
   }
-
 }
+
 const result = reactive({
   status: '404',
   title: 'Correct!',
@@ -123,6 +122,7 @@ const proceedToNext = () => {
   result.status = '404'
   quiz.pickedAnswer = ''
   if (quiz.answered === quizStore.amount - 1 || userStore.lives === 0) {
+    console.log('I am called')
     result.buttonText = 'Finish Quiz'
   } else {
     result.buttonText = 'Skip Question'
@@ -294,15 +294,13 @@ onMounted(() => {
       flex-direction: column;
       justify-content: center;
       background-color: hsl(180, 100%, 10%);
-      padding: 1.5rem;
+      padding: 1.5rem 2rem;
       border-radius: 1rem;
       border: 1px white solid;
       height: 100%;
     }
   }
 }
-
-
 
 .controls {
   display: flex;
@@ -332,10 +330,8 @@ onMounted(() => {
 
 .user-lives {
   display: flex;
-
-  align-self: center;
+  gap: 1rem;
   width: 100%;
-  justify-content: space-around;
 }
 
 .n-button .wrapped-text {
