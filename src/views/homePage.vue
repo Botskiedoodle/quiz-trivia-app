@@ -13,11 +13,14 @@
       <div class="sub-main">
         <n-button type="success" class="button" @click="customizeQuiz">
           <template #icon>
-            <n-icon size="1.5rem">
+            <n-icon size="1.5rem" id="spinIcon">
               <settings />
             </n-icon>
           </template>
-          Customize your quiz here!
+          <div style="padding-left: .25rem">
+            Customize your quiz here!
+          </div>
+
         </n-button>
         <div style="font-size:1.5rem;">Or</div>
         <div>
@@ -44,20 +47,38 @@
       </div>
     </div>
     <n-modal v-model:show="showModal">
-      <n-card style="width: 20rem" title="Customize Quiz" :bordered="true" size="huge">
-        <n-radio-group v-model:value="quiz.amount">
-          <n-radio-button :value="'5'">5</n-radio-button>
-          <n-radio-button :value="'10'">10</n-radio-button>
-          <n-radio-button :value="'15'">15</n-radio-button>
-        </n-radio-group>
-        <n-radio-group v-model:value="quiz.difficulty">
-          <n-radio-button :value="'easy'">Easy Peasy</n-radio-button>
-          <n-radio-button :value="'medium'">Aight</n-radio-button>
-          <n-radio-button :value="'hard'">Hard</n-radio-button>
-        </n-radio-group>
+      <n-card style="width: 24rem" :bordered="true" size="large">
+        <div class="card-title">
+          Customize Quiz
+          <div>
+            <n-icon size="2rem" id="spinIcon">
+              <settings />
+            </n-icon>
+          </div>
+        </div>
+        <div class="card">
+          <n-radio-group v-model:value="quiz.amount">
+            <n-radio-button :value="'5'">5</n-radio-button>
+            <n-radio-button :value="'10'">10</n-radio-button>
+            <n-radio-button :value="'15'">15</n-radio-button>
+          </n-radio-group>
+          <n-radio-group v-model:value="quiz.difficulty">
+            <n-radio-button :value="'easy'">Easy Peasy</n-radio-button>
+            <n-radio-button :value="'medium'">Aight</n-radio-button>
+            <n-radio-button :value="'hard'">Hard</n-radio-button>
+          </n-radio-group>
+          <n-radio-group v-model:value="quiz.type">
+            <n-radio-button :value="''">Both</n-radio-button>
+            <n-radio-button :value="'multiple'">Multiple Choice</n-radio-button>
+            <n-radio-button :value="'boolean'">True or False</n-radio-button>
+          </n-radio-group>
+        </div>
+
         <template #footer>
-          <n-button>Looks Good!</n-button>
-          <n-button>Go Back</n-button>
+          <div class="modal-cta">
+            <n-button type="success" @click="proceedWithCustom">Looks Good!</n-button>
+            <n-button type="error" @click="closeModal">Go Back</n-button>
+          </div>
         </template>
       </n-card>
     </n-modal>
@@ -73,14 +94,27 @@ const quizStore = useQuizStore()
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const showModal = ref(false)
+
 const customizeQuiz = () => {
   showModal.value = true
 }
 
+const closeModal = () => {
+  showModal.value = false
+}
+
 const quiz = reactive({
-  amount: 0,
+  amount: '5',
+  type: '',
   difficulty: 'easy'
 })
+
+const proceedWithCustom = () => {
+  quizStore.difficulty = quiz.difficulty
+  quizStore.amount = quiz.amount
+  quizStore.type = quiz.type
+  router.push('/quiz')
+}
 
 const proceedWithPreset = (preset) => {
   quizStore.difficulty = preset
@@ -92,7 +126,6 @@ const proceedWithPreset = (preset) => {
     quizStore.amount = '15'
   }
   router.push('/quiz')
-
 }
 </script>
 <style lang="scss" scoped>
@@ -131,7 +164,7 @@ const proceedWithPreset = (preset) => {
 
     .presets {
       display: flex;
-      gap: 1rem;
+      gap: 1.25rem;
       transition: transform 0.3s ease;
 
       .preset {
@@ -150,5 +183,43 @@ const proceedWithPreset = (preset) => {
     }
   }
 
+}
+
+.modal-cta {
+  display: flex;
+  gap: .5rem;
+  float: right;
+}
+
+.card-title {
+  padding-bottom: 1rem;
+  font-size: 2rem;
+  color: black;
+  display: flex;
+  gap: 1rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#spinIcon {
+  display: inline-block;
+  animation: spin 10s linear infinite;
+  /* Adjust duration or animation style as needed */
 }
 </style>

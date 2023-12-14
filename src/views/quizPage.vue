@@ -10,7 +10,8 @@
       <div v-for="(quizItem, questionIndex) in quiz.content" :key="quizItem.question" class="app-container"
         v-show="quiz.answered === questionIndex">
         <div class="question-container">
-          {{ quizItem.question }}</div>
+          {{ quizItem.question }}
+        </div>
         <div class="controls-container">
           <div class="answers">
             <div v-for="answer in quizItem.answers" :key="answer" @click="pickAnswer(quizItem.correct_answer, answer)">
@@ -24,8 +25,11 @@
               Difficulty: {{ quizStore.difficulty }}
             </div>
             <n-result :status="result.status" size="huge" />
-            <div class="user-lives">
+            <div class="user-lives" v-if="userStore.lives">
               <img v-for="life in userStore.lives" :key="life" src="../assets/heart.png" width="50" alt="user life">
+            </div>
+            <div v-else style="color: white">
+              No more lives left
             </div>
             <n-button type="success" @click="nextQuestion()" class="controls-button">
               {{ result.buttonText }}
@@ -41,7 +45,7 @@
 </template>
 <script setup>
 import { NButton, useDialog, NResult } from 'naive-ui'
-import { reactive, onMounted, onUpdated } from 'vue'
+import { reactive, onMounted, onUpdated, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
@@ -55,11 +59,7 @@ const router = useRouter()
 
 const dialog = useDialog()
 
-const lifeCheck = () => {
-  if (userStore.lives === 0) {
-    router.push('/quiz-finished')
-  }
-}
+
 
 const buttonType = (correctAnswer, answer) => {
   if (!quiz.notAnswered) {
@@ -94,6 +94,12 @@ const pickAnswer = (correctAnswer, userAnswer) => {
           userStore.subtractLife()
         }
         quiz.notAnswered = false
+        if (userStore.lives === 0) {
+          result.buttonText = 'Finish Quiz'
+        } else {
+          result.buttonText = 'Next Question'
+        }
+
       },
       onNegativeClick: () => {
 
@@ -109,11 +115,14 @@ const result = reactive({
 })
 
 const proceedToNext = () => {
+  if (userStore.lives === 0) {
+    router.push('/quiz-finished')
+  }
   quiz.answered++
   quiz.notAnswered = true
   result.status = '404'
   quiz.pickedAnswer = ''
-  if (quiz.answered === quizStore.amount - 1) {
+  if (quiz.answered === quizStore.amount - 1 || userStore.lives === 0) {
     result.buttonText = 'Finish Quiz'
   } else {
     result.buttonText = 'Skip Question'
@@ -124,15 +133,25 @@ const proceedToNext = () => {
 }
 
 const nextQuestion = () => {
+  let content = ref('')
+  if (userStore.lives === 1) {
+    content.value = 'You only have one life left! This move will cost you a life and fail the quiz. Are you sure you want to proceed?'
+  } else {
+    content.value = 'Are you sure you want to skip this question? This would cost you a life.'
+  }
   if (quiz.notAnswered == true) {
     dialog.warning({
       title: 'Skip Question',
-      content: 'Are you sure you want to skip this question? This would cost you a life.',
+      content: content.value,
       positiveText: 'Yes',
       negativeText: 'No',
       onPositiveClick: () => {
-        proceedToNext()
         userStore.subtractLife()
+        if (userStore.lives === 0) {
+          router.push('/quiz-finished')
+        } else {
+          proceedToNext()
+        }
       }
     })
   } else {
@@ -149,7 +168,7 @@ const quiz = reactive({
   content: []
 })
 
-const apiURL = `https://opentdb.com/api.php?amount=${quizStore.amount}&encode=base64`
+const apiURL = `https://opentdb.com/api.php?encode=base64`
 
 const randomizedAnswers = (correctAnswer, incorrectAnswers) => {
   let incorrect_answers = incorrectAnswers
@@ -162,7 +181,7 @@ const randomizedAnswers = (correctAnswer, incorrectAnswers) => {
 const getQuiz = async () => {
   quiz.loading = true
   try {
-    await axios.get(`${apiURL}&difficulty=${quizStore.difficulty}`)
+    await axios.get(`${apiURL}&difficulty=${quizStore.difficulty}&amount=${quizStore.amount}&type=${quizStore.type}`)
       .then((res) => {
         let quizResponse = res.data.results
         quizResponse.forEach(obj => {
@@ -208,7 +227,7 @@ const quitQuiz = () => {
 }
 
 onUpdated(() => {
-  lifeCheck()
+
 })
 
 onMounted(() => {
@@ -244,7 +263,9 @@ onMounted(() => {
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: .5rem;
+
+  align-items: center;
 
   .question-container {
     font-size: 1.5rem;
@@ -263,17 +284,20 @@ onMounted(() => {
     align-items: center;
     gap: 1rem;
     justify-content: center;
+    height: 24rem;
+
+    padding: 2rem;
 
     .answers {
-      gap: 1rem;
+      gap: 1.25rem;
       display: flex;
       flex-direction: column;
       justify-content: center;
       background-color: hsl(180, 100%, 10%);
-      padding: 2rem;
+      padding: 1.5rem;
       border-radius: 1rem;
       border: 1px white solid;
-      height: 20.5rem;
+      height: 100%;
     }
   }
 }
@@ -285,14 +309,14 @@ onMounted(() => {
   background-color: hsl(180, 100%, 10%);
   flex-direction: column;
   gap: 1rem;
-  padding: 1.5rem;
   min-width: 12rem;
   border-radius: 1rem;
   border: 1px white solid;
+  height: 100%;
+  padding: 1.5rem;
 
   .controls-button {
     transition: .3s all;
-
     border: white 1px solid;
 
     &:hover {
@@ -308,7 +332,10 @@ onMounted(() => {
 
 .user-lives {
   display: flex;
-  gap: 1rem
+
+  align-self: center;
+  width: 100%;
+  justify-content: space-around;
 }
 
 .n-button .wrapped-text {

@@ -10,6 +10,9 @@ export const useQuizStore = defineStore(
     const correct = ref(0)
     const difficulty = ref('easy')
     const amount = ref('5')
+
+    const type = ref('')
+
     function addCorrect() {
       correct.value++
     }
@@ -18,6 +21,6 @@ export const useQuizStore = defineStore(
       correct.value = 0
     }
 
-    return { initializeQuiz, addCorrect, correct, difficulty, amount }
+    return { initializeQuiz, addCorrect, correct, difficulty, amount, type }
   }
 )
