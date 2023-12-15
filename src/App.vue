@@ -16,7 +16,7 @@
         </div>
       </n-dialog-provider>
     </n-message-provider>
-    test
+
   </div>
 </template>
 <script setup>
