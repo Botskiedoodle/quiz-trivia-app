@@ -4,7 +4,6 @@
       Loading...
     </div>
     <div v-else>
-      {{ quiz.answered }} {{ quizStore.amount }}
       <header style="font-size: x-large; font-weight: bold; padding: 0 0 1rem 0;">
         Question {{ quiz.answered + 1 }} of {{ quiz.content.length }}
       </header>
