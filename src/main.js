@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 // import './style.css'
 import App from './App.vue'
-import Particles from 'vue3-particles'
+
 import { createRouter, createWebHistory } from 'vue-router'
 
 import HomePage from '@/views/homePage.vue'
@@ -37,6 +37,6 @@ const router = createRouter({
 
 createApp(App)
   .use(router)
-  .use(Particles)
+
   .use(pinia)
   .mount('#app')
