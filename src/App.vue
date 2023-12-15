@@ -16,12 +16,12 @@
         </div>
       </n-dialog-provider>
     </n-message-provider>
-    <particles />
+
   </div>
 </template>
 <script setup>
 import { NDialogProvider, NMessageProvider } from 'naive-ui';
-import Particles from '@/components/particles.vue'
+
 
 
 
