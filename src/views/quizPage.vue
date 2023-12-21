@@ -4,41 +4,52 @@
       Loading...
     </div>
     <div v-else>
-      <header style="font-size: x-large; font-weight: bold; padding: 0 0 1rem 0;">
+      <header class="question-progress">
         Question {{ quiz.answered + 1 }} of {{ quiz.content.length }}
       </header>
       <div v-for="(quizItem, questionIndex) in quiz.content" :key="quizItem.question" class="app-container"
         v-show="quiz.answered === questionIndex">
         <div class="question-container">
-          {{ quizItem.question }}
-
+          <div class="question">
+            {{ quizItem.question }}
+          </div>
         </div>
         <div class="controls-container">
           <div class="answers">
             <div v-for="answer in quizItem.answers" :key="answer" @click="pickAnswer(quizItem.correct_answer, answer)">
-              <n-button :type="buttonType(quizItem.correct_answer, answer)" class="button" size="large">
+              <n-button :type="buttonType(quizItem.correct_answer, answer)" class="answer button" size="large">
                 {{ answer }}
-
               </n-button>
             </div>
           </div>
           <div class="controls">
-            <div class="difficulty">
-              Difficulty: {{ quizStore.difficulty }}
+            <div class="hud">
+              <div class="difficulty">
+                Difficulty: {{ quizStore.difficulty }}
+              </div>
+              <n-result :status="result.status" size="medium" />
+              <div class="user-lives">
+                <img v-for="life in userStore.lives" :key="life" src="../assets/heart.png" width="40" alt="user life">
+              </div>
+
             </div>
-            <n-result :status="result.status" size="medium" />
-            <div class="user-lives" v-if="userStore.lives">
-              <img v-for="life in userStore.lives" :key="life" src="../assets/heart.png" width="40" alt="user life">
+
+            <div class="buttons">
+
+              <n-button @click="quitQuiz" type="error" class="control button">
+                <!-- Quit -->
+                <n-icon size="1.5rem">
+                  <exit-outline />
+                </n-icon>
+              </n-button>
+              <n-button type="success" @click="nextQuestion()" class="control button">
+                <!-- {{ result.buttonText }} -->
+                <n-icon size="1.5rem">
+                  <play-skip-forward />
+                </n-icon>
+              </n-button>
             </div>
-            <div v-else style="color: white">
-              No more lives left
-            </div>
-            <n-button type="success" @click="nextQuestion()" class="controls-button">
-              {{ result.buttonText }}
-            </n-button>
-            <n-button @click="quitQuiz" type="error" class="controls-button">
-              Quit
-            </n-button>
+
           </div>
         </div>
       </div>
@@ -46,9 +57,10 @@
   </div>
 </template>
 <script setup>
-import { NButton, useDialog, NResult } from 'naive-ui'
+import { NButton, useDialog, NResult, NIcon } from 'naive-ui'
 import { reactive, onMounted, onUpdated, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { PlaySkipForward, ExitOutline } from '@vicons/ionicons5'
 import axios from 'axios'
 
 import { useQuizStore } from '@/store/quiz.js'
@@ -111,7 +123,7 @@ const pickAnswer = (correctAnswer, userAnswer) => {
 const result = reactive({
   status: '404',
   title: 'Correct!',
-  buttonText: 'Skip Question'
+  buttonText: 'Skip'
 })
 
 const proceedToNext = () => {
@@ -126,7 +138,7 @@ const proceedToNext = () => {
     console.log('I am called')
     result.buttonText = 'Finish Quiz'
   } else {
-    result.buttonText = 'Skip Question'
+    result.buttonText = 'Skip'
   }
   if (quiz.answered == quizStore.amount) {
     router.push('/quiz-finished')
@@ -239,16 +251,16 @@ onMounted(() => {
 
 
 </script>
-<style lang="scss" scoped>
+<style lang="scss" scopedSlots>
 .main-quiz {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  .question-progress {
+    font-size: x-large;
+    font-weight: 600;
+    text-align: center;
+  }
 }
 
 .button {
-  width: 100%;
-  border: white 1px solid;
   transition: .3s all;
 
   &:hover {
@@ -257,83 +269,91 @@ onMounted(() => {
 }
 
 .app-container {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+
   padding: 1rem;
 
   .question-container {
-    font-size: 1.5rem;
-    background-color: hsl(180, 100%, 10%);
-    color: white;
+
     padding: 1rem;
+    background-color: hsl(180, 100%, 10%);
     border-radius: 1rem;
-    border: 1px white solid;
-    // width: 100%;
-    margin-bottom: 1rem;
+
+    .question {
+
+      color: white;
+    }
   }
 
-
   .controls-container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
+
 
     .answers {
-      gap: 1rem;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+
+      .answer {
+        width: 100%;
+
+      }
+    }
+
+
+
+    .controls {
+      padding: 1rem;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      align-items: center;
       background-color: hsl(180, 100%, 10%);
-      padding: 1rem;
       border-radius: 1rem;
-      border: 1px white solid;
-      height: 100%;
-      width: 100%;
+      gap: 1rem;
+
+
+      @media screen and (min-width: 768px) {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 4rem;
+      }
+
+      .buttons {
+        display: flex;
+        gap: .75rem;
+
+        @media screen and (min-width: 768px) {
+          display: flex;
+          flex-direction: column-reverse;
+
+          .control {
+            width: 10rem;
+            height: 4rem;
+          }
+        }
+
+        .control {
+          width: 5rem;
+        }
+      }
+
+      .hud {
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+        text-align: center;
+
+        .difficulty {
+          color: white;
+        }
+
+        .user-lives {
+          display: flex;
+          gap: .5rem;
+        }
+      }
     }
   }
-}
-
-.controls {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  flex-direction: column;
-  gap: .5rem;
-  width: 100%;
-  padding: 1rem;
-  background-color: hsl(180, 100%, 10%);
-  border: 1px white solid;
-  border-radius: 1rem;
-  align-items: center;
-
-  .controls-button {
-    transition: .3s all;
-    border: white 1px solid;
-    width: 100%;
-
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
-
-  .difficulty {
-    color: white;
-    font-size: 1.5rem;
-  }
-}
-
-.user-lives {
-  display: flex;
-  gap: .75rem;
-  // width: 100%;
-}
-
-.n-button .wrapped-text {
-  word-wrap: break-word !important;
-  // width: 24rem;
 }
 </style>

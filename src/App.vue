@@ -30,10 +30,12 @@ import { NDialogProvider, NMessageProvider } from 'naive-ui';
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100dvh;
   position: relative;
   z-index: 10;
   user-select: none;
+  margin: .75rem;
+
 }
 
 .main .app {
@@ -41,8 +43,7 @@ import { NDialogProvider, NMessageProvider } from 'naive-ui';
   background-color: hsl(50, 100%, 50%);
   padding: 1rem;
   border: .125rem black solid;
-  margin: 1.5rem;
-
+  max-width: 40rem;
 }
 </style>
 <style>

@@ -31,15 +31,15 @@
           </span>
           <div class="presets">
             <div class="preset" @click="proceedWithPreset('easy')">
-              <img src="../assets/pacifier.png" alt="" width="80" style="transform: rotate(30deg);" draggable="false">
+              <img src="../assets/pacifier.png" alt="" width="60" style="transform: rotate(30deg);" draggable="false">
               <span>Easy Peasy</span>
             </div>
             <div class="preset" @click="proceedWithPreset('medium')">
-              <img src="../assets/book.png" alt="" width="80" draggable="false">
+              <img src="../assets/book.png" alt="" width="60" draggable="false">
               <span>Aight</span>
             </div>
             <div class="preset" @click="proceedWithPreset('hard')">
-              <img src="../assets/hat.png" alt="" width="80" draggable="false">
+              <img src="../assets/hat.png" alt="" width="60" draggable="false">
               <span>Sheeesh</span>
             </div>
           </div>

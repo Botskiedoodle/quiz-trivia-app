@@ -43,8 +43,8 @@ const gif = reactive({
 
 const getGif = async () => {
   let fetchedGIF = {}
-  let loseArray = ['loser', 'fail', 'trash', 'defeat', 'failure', 'flop', 'beaten', 'unsuccessful', 'disappointment', 'zero']
-  let winArray = ['winner', 'win', 'trophy', 'celebrate', 'champion', 'victor', 'triumph', 'success', 'victory', 'conqueror', 'achievement', 'accomplishment', 'prize', 'glory', 'top-notch']
+  let loseArray = ['loser', 'lose', 'cry', 'crying', 'sad', 'fail', 'dumb', 'stupid']
+  let winArray = ['winner', 'win', 'trophy', 'celebrate', 'champion', 'victor', 'triumph', 'success', 'victory']
   let searchString = ''
   if (result.failed) {
     const randomIndex = Math.floor(Math.random() * loseArray.length)
@@ -59,7 +59,7 @@ const getGif = async () => {
     await axios.get(apiURL)
       .then((res) => {
         const randomIndex = Math.floor(Math.random() * 50);
-        fetchedGIF = res.data.data[randomIndex].images.original
+        fetchedGIF = res.data.data[randomIndex].images.fixed_height
         gif.source = fetchedGIF.url
         gif.width = fetchedGIF.width
         gif.height = fetchedGIF.height
