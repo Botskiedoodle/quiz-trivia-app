@@ -183,7 +183,7 @@ const getQuiz = async () => {
   try {
     quiz.loading = true;
     // await axios.get(`${apiURL}&difficulty=${quizStore.difficulty}&amount=${quizStore.amount}&type=${quizStore.type}`)
-    const response = await axios.get(`${apiURL}&difficulty=easy&amount=5`);
+    const response = await axios.get(`${apiURL}&difficulty=${quizStore.difficulty}&amount=${quizStore.amount}`);
     const quizResponse = response.data.results;
 
     quizResponse.forEach(obj => {
@@ -271,6 +271,7 @@ onMounted(() => {
     border-radius: 1rem;
     border: 1px white solid;
     // width: 100%;
+    margin-bottom: 1rem;
   }
 
 
@@ -279,7 +280,6 @@ onMounted(() => {
     align-items: center;
     gap: 1rem;
     justify-content: center;
-    padding: 1rem;
     flex-wrap: wrap;
 
     .answers {
@@ -288,7 +288,7 @@ onMounted(() => {
       flex-direction: column;
       justify-content: center;
       background-color: hsl(180, 100%, 10%);
-      padding: 1.25rem;
+      padding: 1rem;
       border-radius: 1rem;
       border: 1px white solid;
       height: 100%;
@@ -299,19 +299,21 @@ onMounted(() => {
 
 .controls {
   display: flex;
-  background-color: hsl(180, 100%, 10%);
-  // flex-direction: column;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 1rem;
-  border-radius: 1rem;
-  border: 1px white solid;
+  flex-direction: column;
+  gap: .5rem;
   width: 100%;
-  padding: 1.25rem;
+  padding: 1rem;
+  background-color: hsl(180, 100%, 10%);
+  border: 1px white solid;
+  border-radius: 1rem;
+  align-items: center;
 
   .controls-button {
     transition: .3s all;
     border: white 1px solid;
+    width: 100%;
 
     &:hover {
       transform: scale(1.1);
