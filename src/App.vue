@@ -27,8 +27,9 @@ import { NDialogProvider, NMessageProvider } from 'naive-ui';
 </script>
 <style scoped>
 .main {
-  display: grid;
-  place-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100vh;
   position: relative;
   z-index: 10;
@@ -36,12 +37,12 @@ import { NDialogProvider, NMessageProvider } from 'naive-ui';
 }
 
 .main .app {
-  /* height: 70dvh; */
-  /* width: 70dvh; */
   border-radius: 10px;
   background-color: hsl(50, 100%, 50%);
-  padding: 2.5rem;
+  padding: 1rem;
   border: .125rem black solid;
+  margin: 1.5rem;
+
 }
 </style>
 <style>

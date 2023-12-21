@@ -11,12 +11,14 @@
         v-show="quiz.answered === questionIndex">
         <div class="question-container">
           {{ quizItem.question }}
+
         </div>
         <div class="controls-container">
           <div class="answers">
             <div v-for="answer in quizItem.answers" :key="answer" @click="pickAnswer(quizItem.correct_answer, answer)">
-              <n-button :type="buttonType(quizItem.correct_answer, answer)" class="button">
+              <n-button :type="buttonType(quizItem.correct_answer, answer)" class="button" size="large">
                 {{ answer }}
+
               </n-button>
             </div>
           </div>
@@ -24,9 +26,9 @@
             <div class="difficulty">
               Difficulty: {{ quizStore.difficulty }}
             </div>
-            <n-result :status="result.status" size="huge" />
+            <n-result :status="result.status" size="medium" />
             <div class="user-lives" v-if="userStore.lives">
-              <img v-for="life in userStore.lives" :key="life" src="../assets/heart.png" width="50" alt="user life">
+              <img v-for="life in userStore.lives" :key="life" src="../assets/heart.png" width="40" alt="user life">
             </div>
             <div v-else style="color: white">
               No more lives left
@@ -178,40 +180,40 @@ const randomizedAnswers = (correctAnswer, incorrectAnswers) => {
 }
 
 const getQuiz = async () => {
-  quiz.loading = true
   try {
-    await axios.get(`${apiURL}&difficulty=${quizStore.difficulty}&amount=${quizStore.amount}&type=${quizStore.type}`)
-      .then((res) => {
-        let quizResponse = res.data.results
-        quizResponse.forEach(obj => {
-          for (let prop in obj) {
-            if (Array.isArray(obj[prop])) {
-              for (let i = 0; i < obj[prop].length; i++) {
-                obj[prop][i] = atob(obj[prop][i])
-              }
-            } else {
-              obj[prop] = atob(obj[prop])
-            }
-          }
-        })
-        quizResponse.forEach((question) => {
-          if (question.type === 'multiple') {
-            question.answers = randomizedAnswers(question.correct_answer, question.incorrect_answers)
-          } else {
-            question.answers = ['True', 'False']
-          }
+    quiz.loading = true;
+    // await axios.get(`${apiURL}&difficulty=${quizStore.difficulty}&amount=${quizStore.amount}&type=${quizStore.type}`)
+    const response = await axios.get(`${apiURL}&difficulty=easy&amount=5`);
+    const quizResponse = response.data.results;
 
-        })
-        quiz.content = [...quizResponse]
-      })
+    quizResponse.forEach(obj => {
+      for (let prop in obj) {
+        if (Array.isArray(obj[prop])) {
+          obj[prop] = obj[prop].map(item => atob(item));
+        } else {
+          obj[prop] = atob(obj[prop]);
+        }
+      }
+    });
+
+    quizResponse.forEach(question => {
+      if (question.type === 'multiple') {
+        question.answers = randomizedAnswers(question.correct_answer, question.incorrect_answers);
+      } else {
+        question.answers = ['True', 'False'];
+      }
+    });
+
+    quiz.content = [...quizResponse];
+
+  } catch (error) {
+    console.error(error);
+
+  } finally {
+    quiz.loading = false;
   }
-  catch (error) {
-    console.log(error)
-  }
-  finally {
-    quiz.loading = false
-  }
-}
+};
+
 
 const quitQuiz = () => {
   dialog.warning({
@@ -241,15 +243,11 @@ onMounted(() => {
 .main-quiz {
   display: flex;
   flex-direction: column;
-  width: 50rem;
   align-items: center;
 }
 
-
-
 .button {
-  min-width: 24rem;
-  padding: 2rem;
+  width: 100%;
   border: white 1px solid;
   transition: .3s all;
 
@@ -262,19 +260,17 @@ onMounted(() => {
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: .5rem;
-
   align-items: center;
+  padding: 1rem;
 
   .question-container {
     font-size: 1.5rem;
-    padding-bottom: 2rem;
     background-color: hsl(180, 100%, 10%);
     color: white;
-    padding: 2rem;
+    padding: 1rem;
     border-radius: 1rem;
     border: 1px white solid;
-    width: 40rem;
+    // width: 100%;
   }
 
 
@@ -283,20 +279,20 @@ onMounted(() => {
     align-items: center;
     gap: 1rem;
     justify-content: center;
-    height: 24rem;
-
-    padding: 2rem;
+    padding: 1rem;
+    flex-wrap: wrap;
 
     .answers {
-      gap: 1.25rem;
+      gap: 1rem;
       display: flex;
       flex-direction: column;
       justify-content: center;
       background-color: hsl(180, 100%, 10%);
-      padding: 1.5rem 2rem;
+      padding: 1.25rem;
       border-radius: 1rem;
       border: 1px white solid;
       height: 100%;
+      width: 100%;
     }
   }
 }
@@ -304,13 +300,14 @@ onMounted(() => {
 .controls {
   display: flex;
   background-color: hsl(180, 100%, 10%);
-  flex-direction: column;
+  // flex-direction: column;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 1rem;
-  min-width: 12rem;
   border-radius: 1rem;
   border: 1px white solid;
-  height: 100%;
-  padding: 1.5rem;
+  width: 100%;
+  padding: 1.25rem;
 
   .controls-button {
     transition: .3s all;
@@ -329,12 +326,12 @@ onMounted(() => {
 
 .user-lives {
   display: flex;
-  gap: 1rem;
-  width: 100%;
+  gap: .75rem;
+  // width: 100%;
 }
 
 .n-button .wrapped-text {
   word-wrap: break-word !important;
-  width: 24rem;
+  // width: 24rem;
 }
 </style>

@@ -5,13 +5,16 @@
     </div>
     <div class="main">
       <div class="sub-main">
-        <div>
-          log in to earn badges!
-        </div>
+        <n-button type="info" size="large" class="button">
+          <template #icon>
+            <n-icon size="1.5rem">
+              <logo-google />
+            </n-icon>
+          </template>
+          Log in to earn badges!</n-button>
       </div>
-      <n-divider vertical style="height: 22rem ; background-color: black;" />
       <div class="sub-main">
-        <n-button type="success" class="button" @click="customizeQuiz">
+        <n-button type="success" size="large" @click="customizeQuiz" class="button">
           <template #icon>
             <n-icon size="1.5rem" id="spinIcon">
               <settings />
@@ -20,7 +23,6 @@
           <div style="padding-left: .25rem">
             Customize your quiz here!
           </div>
-
         </n-button>
         <div style="font-size:1.5rem;">Or</div>
         <div>
@@ -29,15 +31,15 @@
           </span>
           <div class="presets">
             <div class="preset" @click="proceedWithPreset('easy')">
-              <img src="../assets/pacifier.png" alt="" width="100" style="transform: rotate(30deg);" draggable="false">
+              <img src="../assets/pacifier.png" alt="" width="80" style="transform: rotate(30deg);" draggable="false">
               <span>Easy Peasy</span>
             </div>
             <div class="preset" @click="proceedWithPreset('medium')">
-              <img src="../assets/book.png" alt="" width="100" draggable="false">
+              <img src="../assets/book.png" alt="" width="80" draggable="false">
               <span>Aight</span>
             </div>
             <div class="preset" @click="proceedWithPreset('hard')">
-              <img src="../assets/hat.png" alt="" width="100" draggable="false">
+              <img src="../assets/hat.png" alt="" width="80" draggable="false">
               <span>Sheeesh</span>
             </div>
           </div>
@@ -85,8 +87,8 @@
   </div>
 </template>
 <script setup>
-import { NDivider, NIcon, NButton, NModal, NCard, NRadioButton, NRadioGroup } from 'naive-ui'
-import { Settings } from '@vicons/ionicons5'
+import { NIcon, NButton, NModal, NCard, NRadioButton, NRadioGroup } from 'naive-ui'
+import { Settings, LogoGoogle } from '@vicons/ionicons5'
 import { reactive, ref } from 'vue'
 import { useQuizStore } from '@/store/quiz.js'
 const quizStore = useQuizStore()
@@ -131,30 +133,26 @@ const proceedWithPreset = (preset) => {
 </script>
 <style lang="scss" scoped>
 .app-title {
-  display: grid;
-  place-content: center;
+  text-align: center;
   font-size: 2rem;
+  padding: 1rem;
 }
 
 .main {
   display: flex;
   justify-content: center;
-  padding: .5rem;
-  ;
+  flex-direction: column;
+  gap: .5rem;
 
   .sub-main {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 2rem;
     gap: 1rem;
 
     .button {
-      padding: 2rem;
-      font-size: 1.5rem;
-      border: .125rem black solid;
-
+      min-width: 16rem;
     }
 
     .preset-title {
@@ -167,6 +165,7 @@ const proceedWithPreset = (preset) => {
       display: flex;
       gap: 1.25rem;
       transition: transform 0.3s ease;
+      flex-wrap: wrap;
 
       .preset {
         display: flex;
@@ -174,7 +173,6 @@ const proceedWithPreset = (preset) => {
         text-align: center;
         font-size: 1rem;
         user-select: none;
-
 
         &:hover {
           transform: scale(1.1);
