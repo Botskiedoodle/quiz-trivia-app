@@ -278,6 +278,7 @@ onMounted(() => {
     background-color: hsl(180, 100%, 10%);
     border-radius: 1rem;
 
+
     .question {
 
       color: white;
@@ -308,6 +309,7 @@ onMounted(() => {
       justify-content: center;
       align-items: center;
       background-color: hsl(180, 100%, 10%);
+
       border-radius: 1rem;
       gap: 1rem;
 
@@ -315,8 +317,8 @@ onMounted(() => {
       @media screen and (min-width: 768px) {
         display: flex;
         flex-direction: row;
-        justify-content: center;
-        gap: 4rem;
+        justify-content: space-around;
+        // gap: 4rem;
       }
 
       .buttons {
