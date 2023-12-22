@@ -28,8 +28,11 @@
                 Difficulty: {{ quizStore.difficulty }}
               </div>
               <n-result :status="result.status" size="medium" />
-              <div class="user-lives">
+              <div class="user-lives" v-if="userStore.lives != 0">
                 <img v-for="life in userStore.lives" :key="life" src="../assets/heart.png" width="40" alt="user life">
+              </div>
+              <div v-else>
+                <img src="../assets/grave.png" alt="grave" width="70">
               </div>
             </div>
             <div class="buttons">
@@ -322,6 +325,7 @@ onMounted(() => {
         @media screen and (min-width: 768px) {
           display: flex;
           flex-direction: column-reverse;
+
 
           .control {
             width: 10rem;
