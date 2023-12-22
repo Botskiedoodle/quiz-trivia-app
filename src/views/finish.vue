@@ -44,7 +44,7 @@ const gif = reactive({
 const getGif = async () => {
   let fetchedGIF = {}
   let loseArray = ['lose', 'cry', 'crying', 'sad', 'fail', 'dumb', 'stupid']
-  let winArray = ['win', 'trophy', 'celebrate', 'confetti']
+  let winArray = ['win', 'celebrate', 'confetti', 'dancing']
   let searchString = ''
   if (result.failed) {
     const randomIndex = Math.floor(Math.random() * loseArray.length)
