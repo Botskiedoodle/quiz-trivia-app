@@ -31,11 +31,8 @@
               <div class="user-lives">
                 <img v-for="life in userStore.lives" :key="life" src="../assets/heart.png" width="40" alt="user life">
               </div>
-
             </div>
-
             <div class="buttons">
-
               <n-button @click="quitQuiz" type="error" class="control button">
                 <!-- Quit -->
                 <n-icon size="1.5rem">
@@ -49,7 +46,6 @@
                 </n-icon>
               </n-button>
             </div>
-
           </div>
         </div>
       </div>
@@ -299,8 +295,6 @@ onMounted(() => {
 
       }
     }
-
-
 
     .controls {
       padding: 1rem;

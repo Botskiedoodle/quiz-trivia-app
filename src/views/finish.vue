@@ -5,7 +5,8 @@
     </div>
     <div v-else>
       <h1 style="display: grid; place-content: center;">{{ result.title }}</h1>
-      <img :src="gif.source" :width="gif.width" :height="gif.height" style="border-radius: 1rem;" />
+      <img :src="gif.source" :width="gif.width" :height="gif.height"
+        style="border-radius: 1rem; border: 2px black solid" />
       <div class="result-summary">
         <span>
           {{ quizStore.correct }}
@@ -17,7 +18,6 @@
         <n-button type="info" @click="goHome()">Return to Home</n-button>
       </div>
     </div>
-
   </div>
 </template>
 <script setup>
@@ -43,8 +43,8 @@ const gif = reactive({
 
 const getGif = async () => {
   let fetchedGIF = {}
-  let loseArray = ['loser', 'lose', 'cry', 'crying', 'sad', 'fail', 'dumb', 'stupid']
-  let winArray = ['winner', 'win', 'trophy', 'celebrate', 'champion', 'victor', 'triumph', 'success', 'victory']
+  let loseArray = ['lose', 'cry', 'crying', 'sad', 'fail', 'dumb', 'stupid']
+  let winArray = ['win', 'trophy', 'celebrate', 'confetti']
   let searchString = ''
   if (result.failed) {
     const randomIndex = Math.floor(Math.random() * loseArray.length)
