@@ -1,12 +1,14 @@
 <template>
   <div>
-    <div v-if="gif.loading">
-      Loading...
-    </div>
+    <div v-if="gif.loading">Loading...</div>
     <div v-else>
-      <h1 style="display: grid; place-content: center;">{{ result.title }}</h1>
-      <img :src="gif.source" :width="gif.width" :height="gif.height"
-        style="border-radius: 1rem; border: 2px black solid" />
+      <h1 style="display: grid; place-content: center">{{ result.title }}</h1>
+      <img
+        :src="gif.source"
+        :width="gif.width"
+        :height="gif.height"
+        style="border-radius: 1rem; border: 2px black solid"
+      />
       <div class="result-summary">
         <span>
           {{ quizStore.correct }}
@@ -21,92 +23,74 @@
   </div>
 </template>
 <script setup>
-import { NButton } from 'naive-ui'
+import { NButton } from "naive-ui";
 
-import { useQuizStore } from '@/store/quiz.js'
-const quizStore = useQuizStore()
+import { useQuizStore } from "@/store/quiz.js";
+const quizStore = useQuizStore();
 
-import { useUserStore } from '@/store/user.js'
-import { onMounted, reactive } from 'vue';
+import { useUserStore } from "@/store/user.js";
+import { onMounted, reactive } from "vue";
 
-import { useRouter } from 'vue-router'
-const router = useRouter()
+import { useRouter } from "vue-router";
+const router = useRouter();
 
-import axios from 'axios'
-
+import axios from "axios";
+import { getRandomGif } from "@/api";
 const gif = reactive({
-  height: '',
-  width: '',
-  source: '',
+  height: "",
+  width: "",
+  source: "",
   loading: true
-})
+});
 
 const getGif = async () => {
-  let fetchedGIF = {}
-  let loseArray = ['lose', 'cry', 'sad', 'fail', 'dumb', 'stupid']
-  let winArray = ['win', 'celebrate', 'confetti', 'dancing']
-  let searchString = ''
-  if (result.failed) {
-    const randomIndex = Math.floor(Math.random() * loseArray.length)
-    searchString = loseArray[randomIndex]
-  } else {
-    const randomIndex = Math.floor(Math.random() * winArray.length)
-    searchString = winArray[randomIndex]
-  }
-  let apiURL = `https://api.giphy.com/v1/gifs/search?api_key=3N65mYWlRO6kIeRDAzf7meMhjCM04ToV&q=${searchString}&limit=50&offset=0&rating=g&lang=en&bundle=messaging_non_clips`
   try {
-    gif.loading = true
-    await axios.get(apiURL)
-      .then((res) => {
-        const randomIndex = Math.floor(Math.random() * 50);
-        fetchedGIF = res.data.data[randomIndex].images.fixed_height
-        gif.source = fetchedGIF.url
-        gif.width = fetchedGIF.width
-        gif.height = fetchedGIF.height
-      })
+    gif.loading = true;
+    const fetchedGIF = await getRandomGif(result.failed);
+    gif.source = fetchedGIF.url;
+    gif.width = fetchedGIF.width;
+    gif.height = fetchedGIF.height;
+  } catch (error) {
+    console.log(error);
+  } finally {
+    gif.loading = false;
   }
-  catch (error) {
-    console.log(error)
-  }
-  finally {
-    gif.loading = false
-  }
-}
+};
 
 const playAgain = () => {
-  router.push('/quiz')
-}
+  router.push("/quiz");
+};
 
 const goHome = () => {
-  router.push('/')
-}
+  router.push("/");
+};
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 
 const result = reactive({
-  title: 'Quiz Finished!',
+  title: "Quiz Finished!",
   failed: false
-})
+});
 
 const checkIfQuizFailed = () => {
   if (userStore.lives === 0) {
-    result.title = 'You lost'
-    result.failed = true
+    result.title = "You lost";
+    result.failed = true;
   } else {
-    result.title = 'Quiz Finished!'
-    result.failed = false
+    result.title = "Quiz Finished!";
+    result.failed = false;
   }
-}
+};
 onMounted(() => {
-  checkIfQuizFailed()
-  getGif()
-})
+  checkIfQuizFailed();
+  getGif();
+});
 </script>
 <style scoped>
 .controls {
   display: flex;
   flex-direction: column;
-  gap: .5rem;
+  gap: 0.5rem;
 }
 
 .result-summary {
