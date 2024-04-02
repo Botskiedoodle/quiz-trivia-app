@@ -11,6 +11,9 @@ dependencies:
   pinia:
     specifier: ^2.1.7
     version: 2.1.7(vue@3.3.8)
+  pnpm:
+    specifier: ^8.15.6
+    version: 8.15.6
   vue:
     specifier: ^3.3.8
     version: 3.3.8
@@ -824,6 +827,12 @@ packages:
       '@vue/devtools-api': 6.5.1
       vue: 3.3.8
       vue-demi: 0.14.6(vue@3.3.8)
+    dev: false
+
+  /pnpm@8.15.6:
+    resolution: {integrity: sha512-d7iem+d6Kwatj0A6Gcrl4il29hAj+YrTI9XDAZSVjrwC7gpq5dE+5FT2E05OjK8poF8LGg4dKxe8prah8RWfhg==}
+    engines: {node: '>=16.14'}
+    hasBin: true
     dev: false
 
   /postcss@8.4.31:
