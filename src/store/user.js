@@ -32,7 +32,6 @@ export const useUserStore = defineStore("user", () => {
       description:
         "Congratulations, you've achieved the bare minimum! Hope you enjoyed your leisurely stroll through the land of the obvious. Next stop: Advanced mediocrity."
     },
-
     finishTheQuizOnMedium: {
       flag: 0,
       image: "meh",

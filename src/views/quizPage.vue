@@ -90,7 +90,12 @@ import { NButton, useDialog, NResult, NIcon, NSpin } from "naive-ui";
 import { reactive, onMounted, onUpdated, ref } from "vue";
 import { useRouter } from "vue-router";
 import { PlaySkipForward, ExitOutline } from "@vicons/ionicons5";
-
+import {
+  finishQuizAnyDifficulty,
+  finishQuizOnce,
+  finishFlawlessly,
+  checkForPoop
+} from "@/utility";
 import { getQuizQuestions } from "@/api";
 
 import { useQuizStore } from "@/store/quiz.js";
@@ -167,20 +172,10 @@ const proceedToNext = () => {
     result.buttonText = "Skip";
   }
   if (quiz.answered == quizStore.amount) {
-    // check for difficulty here
-    if (quizStore.difficulty === "easy") {
-      if (userStore.achievementBadges.finishTheQuizOnEasy === 0) {
-        userStore.achievementBadges.finishTheQuizOnEasy.flag = 1;
-      }
-    } else if (quizStore.difficulty === "medium") {
-      if (userStore.achievementBadges.finishTheQuizOnMedium === 0) {
-        userStore.achievementBadges.finishTheQuizOnMedium.flag = 1;
-      }
-    } else if (quizStore.difficulty === "hard") {
-      if (userStore.achievementBadges.finishTheQuizOnHard === 0) {
-        userStore.achievementBadges.finishTheQuizOnHard.flag = 1;
-      }
-    }
+    // quiz is finished
+    finishFlawlessly();
+    finishQuizOnce();
+    finishQuizAnyDifficulty();
     router.push("/quiz-finished");
   }
 };
@@ -205,9 +200,7 @@ const nextQuestion = () => {
 
         if (userStore.lives === 0) {
           if (quiz.correct === 0) {
-            if (userStore.achievementBadges.zeroPointsOnSingleQuiz.flag === 0) {
-              userStore.achievementBadges.zeroPointsOnSingleQuiz.flag = 1;
-            }
+            checkForPoop();
           }
           router.push("/quiz-finished");
         } else {
