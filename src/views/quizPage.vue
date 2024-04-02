@@ -1,7 +1,17 @@
 <template>
   <div class="main-quiz">
-    <div v-if="quiz.content.length === 0">Loading...</div>
-    <div v-else>
+    <div v-if="gif.loading"><n-spin size="large" /></div>
+    <div v-if="quiz.loading && !gif.loading">
+      <img
+        :src="gif.source"
+        :width="gif.width"
+        :height="gif.height"
+        style="border-radius: 1rem; border: 2px black solid"
+      />
+      <div style="text-align: center">Fetching Questions...</div>
+    </div>
+
+    <div v-else-if="!quiz.loading">
       <header class="question-progress">
         Question {{ quiz.answered + 1 }} of {{ quiz.content.length }}
       </header>
@@ -76,11 +86,16 @@
   </div>
 </template>
 <script setup>
-import { NButton, useDialog, NResult, NIcon } from "naive-ui";
+import { NButton, useDialog, NResult, NIcon, NSpin } from "naive-ui";
 import { reactive, onMounted, onUpdated, ref } from "vue";
 import { useRouter } from "vue-router";
 import { PlaySkipForward, ExitOutline } from "@vicons/ionicons5";
-
+import {
+  finishQuizAnyDifficulty,
+  finishQuizOnce,
+  finishFlawlessly,
+  checkForPoop
+} from "@/utility";
 import { getQuizQuestions } from "@/api";
 
 import { useQuizStore } from "@/store/quiz.js";
@@ -152,12 +167,15 @@ const proceedToNext = () => {
   result.status = "404";
   quiz.pickedAnswer = "";
   if (quiz.answered === quizStore.amount - 1 || userStore.lives === 0) {
-    console.log("I am called");
     result.buttonText = "Finish Quiz";
   } else {
     result.buttonText = "Skip";
   }
   if (quiz.answered == quizStore.amount) {
+    // quiz is finished
+    finishFlawlessly();
+    finishQuizOnce();
+    finishQuizAnyDifficulty();
     router.push("/quiz-finished");
   }
 };
@@ -179,7 +197,11 @@ const nextQuestion = () => {
       negativeText: "No",
       onPositiveClick: () => {
         userStore.subtractLife();
+
         if (userStore.lives === 0) {
+          if (quiz.correct === 0) {
+            checkForPoop();
+          }
           router.push("/quiz-finished");
         } else {
           proceedToNext();
@@ -210,7 +232,8 @@ const randomizedAnswers = (correctAnswer, incorrectAnswers) => {
 
 const getQuiz = async () => {
   try {
-    quiz.loading = true;
+    // quiz.loading = true;
+
     const { difficulty, amount } = quizStore;
     const quizResponse = await getQuizQuestions(difficulty, amount);
 
@@ -256,10 +279,37 @@ const quitQuiz = () => {
   });
 };
 
-onUpdated(() => {});
+import { getLoadingGif } from "@/api";
+const gif = reactive({
+  height: "",
+  width: "",
+  source: "",
+  loading: true
+});
 
+const getGif = async () => {
+  try {
+    gif.loading = true;
+    const fetchedGIF = await getLoadingGif();
+    gif.source = fetchedGIF.url;
+    gif.width = fetchedGIF.width;
+    gif.height = fetchedGIF.height;
+  } catch (error) {
+    console.log(error);
+  } finally {
+    gif.loading = false;
+  }
+};
+
+onUpdated(() => {});
+const Init = () => {
+  quiz.loading = true;
+  getGif();
+  setTimeout(getQuiz, 2000);
+  // getQuiz();
+};
 onMounted(() => {
-  getQuiz();
+  Init();
   userStore.initializeLives();
   quizStore.initializeQuiz();
 });
