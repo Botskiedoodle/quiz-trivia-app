@@ -1,51 +1,71 @@
 <template>
   <div>
-    <div class="app-title">
-      Welcome to the Greatest Trivia Quiz Ever!
-    </div>
+    <div class="app-title">Welcome to the Greatest Trivia Quiz Ever!</div>
     <div class="main">
       <div class="sub-main">
-        <n-button type="info" size="large" class="button">
+        <n-button
+          type="info"
+          size="large"
+          class="button"
+          @click="goToAchievements"
+        >
           <template #icon>
             <n-icon size="1.5rem">
               <logo-google />
             </n-icon>
           </template>
-          Log in to earn badges!</n-button>
+          Log in to earn badges!</n-button
+        >
       </div>
       <div class="sub-main">
-        <n-button type="success" size="large" @click="customizeQuiz" class="button">
+        <n-button
+          type="success"
+          size="large"
+          @click="customizeQuiz"
+          class="button"
+        >
           <template #icon>
             <n-icon size="1.5rem" id="spinIcon">
               <settings />
             </n-icon>
           </template>
-          <div style="padding-left: .25rem">
-            Customize your quiz here!
-          </div>
+          <div style="padding-left: 0.25rem">Customize your quiz here!</div>
         </n-button>
-        <div style="font-size:1.5rem;">Or</div>
+        <div style="font-size: 1.5rem">Or</div>
         <div>
-          <span class="preset-title">
-            Pick a preset!
-          </span>
+          <span class="preset-title"> Pick a preset! </span>
           <div class="presets">
             <div class="preset" @click="proceedWithPreset('easy')">
-              <img src="../assets/pacifier.png" alt="" width="60" style="transform: rotate(30deg);" draggable="false">
+              <img
+                src="../assets/pacifier.png"
+                alt=""
+                width="60"
+                style="transform: rotate(30deg)"
+                draggable="false"
+              />
               <span>Easy Peasy</span>
             </div>
             <div class="preset" @click="proceedWithPreset('medium')">
-              <img src="../assets/book.png" alt="" width="60" draggable="false">
+              <img
+                src="../assets/book.png"
+                alt=""
+                width="60"
+                draggable="false"
+              />
               <span>Aight</span>
             </div>
             <div class="preset" @click="proceedWithPreset('hard')">
-              <img src="../assets/hat.png" alt="" width="60" draggable="false">
+              <img
+                src="../assets/hat.png"
+                alt=""
+                width="60"
+                draggable="false"
+              />
               <span>Sheeesh</span>
             </div>
           </div>
         </div>
-        <div>
-        </div>
+        <div></div>
       </div>
     </div>
     <n-modal v-model:show="showModal">
@@ -78,7 +98,9 @@
 
         <template #footer>
           <div class="modal-cta">
-            <n-button type="success" @click="proceedWithCustom">Looks Good!</n-button>
+            <n-button type="success" @click="proceedWithCustom"
+              >Looks Good!</n-button
+            >
             <n-button type="error" @click="closeModal">Go Back</n-button>
           </div>
         </template>
@@ -87,49 +109,58 @@
   </div>
 </template>
 <script setup>
-import { NIcon, NButton, NModal, NCard, NRadioButton, NRadioGroup } from 'naive-ui'
-import { Settings, LogoGoogle } from '@vicons/ionicons5'
-import { reactive, ref } from 'vue'
-import { useQuizStore } from '@/store/quiz.js'
-const quizStore = useQuizStore()
-
-import { useRouter } from 'vue-router'
-const router = useRouter()
-const showModal = ref(false)
+import {
+  NIcon,
+  NButton,
+  NModal,
+  NCard,
+  NRadioButton,
+  NRadioGroup
+} from "naive-ui";
+import { Settings, LogoGoogle } from "@vicons/ionicons5";
+import { reactive, ref } from "vue";
+import { useQuizStore } from "@/store/quiz.js";
+const quizStore = useQuizStore();
+const goToAchievements = () => {
+  router.push("/achievements");
+};
+import { useRouter } from "vue-router";
+const router = useRouter();
+const showModal = ref(false);
 
 const customizeQuiz = () => {
-  showModal.value = true
-}
+  showModal.value = true;
+};
 
 const closeModal = () => {
-  showModal.value = false
-}
+  showModal.value = false;
+};
 
 const quiz = reactive({
-  amount: '5',
-  type: '',
-  difficulty: 'easy'
-})
+  amount: "5",
+  type: "",
+  difficulty: "easy"
+});
 
 const proceedWithCustom = () => {
-  quizStore.difficulty = quiz.difficulty
-  quizStore.amount = quiz.amount
-  quizStore.type = quiz.type
-  router.push('/quiz')
-}
+  quizStore.difficulty = quiz.difficulty;
+  quizStore.amount = quiz.amount;
+  quizStore.type = quiz.type;
+  router.push("/quiz");
+};
 
 const proceedWithPreset = (preset) => {
-  quizStore.difficulty = preset
-  quizStore.type = ''
-  if (preset === 'easy') {
-    quizStore.amount = '5'
-  } else if (preset === 'medium') {
-    quizStore.amount = '10'
+  quizStore.difficulty = preset;
+  quizStore.type = "";
+  if (preset === "easy") {
+    quizStore.amount = "5";
+  } else if (preset === "medium") {
+    quizStore.amount = "10";
   } else {
-    quizStore.amount = '15'
+    quizStore.amount = "15";
   }
-  router.push('/quiz')
-}
+  router.push("/quiz");
+};
 </script>
 <style lang="scss" scoped>
 .app-title {
@@ -142,7 +173,7 @@ const proceedWithPreset = (preset) => {
   display: flex;
   justify-content: center;
   flex-direction: column;
-  gap: .5rem;
+  gap: 0.5rem;
 
   .sub-main {
     display: flex;
@@ -181,12 +212,11 @@ const proceedWithPreset = (preset) => {
       }
     }
   }
-
 }
 
 .modal-cta {
   display: flex;
-  gap: .5rem;
+  gap: 0.5rem;
   float: right;
 }
 
@@ -203,7 +233,6 @@ const proceedWithPreset = (preset) => {
   flex-direction: column;
   gap: 1rem;
   width: 100%;
-
 }
 
 @keyframes spin {
