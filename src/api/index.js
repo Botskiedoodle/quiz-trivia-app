@@ -35,7 +35,7 @@ export const getRandomGif = async (result) => {
 };
 
 export const getLoadingGif = async () => {
-  let loadingArray = ["studying", "typing"];
+  let loadingArray = ["waiting"];
   let searchString = "";
   const randomIndex = Math.floor(Math.random() * loadingArray.length);
   searchString = loadingArray[randomIndex];

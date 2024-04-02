@@ -49,10 +49,7 @@ export const useUserStore = defineStore("user", () => {
   });
 
   const tracker = reactive({
-    correctAnswers: {
-      general: 0,
-      trueOrFalse: 0
-    }
+    correctAnswers: 0
   });
 
   const lives = ref(0);

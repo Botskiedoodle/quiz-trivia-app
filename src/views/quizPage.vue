@@ -162,12 +162,25 @@ const proceedToNext = () => {
   result.status = "404";
   quiz.pickedAnswer = "";
   if (quiz.answered === quizStore.amount - 1 || userStore.lives === 0) {
-    console.log("I am called");
     result.buttonText = "Finish Quiz";
   } else {
     result.buttonText = "Skip";
   }
   if (quiz.answered == quizStore.amount) {
+    // check for difficulty here
+    if (quizStore.difficulty === "easy") {
+      if (userStore.achievementBadges.finishTheQuizOnEasy === 0) {
+        userStore.achievementBadges.finishTheQuizOnEasy.flag = 1;
+      }
+    } else if (quizStore.difficulty === "medium") {
+      if (userStore.achievementBadges.finishTheQuizOnMedium === 0) {
+        userStore.achievementBadges.finishTheQuizOnMedium.flag = 1;
+      }
+    } else if (quizStore.difficulty === "hard") {
+      if (userStore.achievementBadges.finishTheQuizOnHard === 0) {
+        userStore.achievementBadges.finishTheQuizOnHard.flag = 1;
+      }
+    }
     router.push("/quiz-finished");
   }
 };
@@ -189,7 +202,13 @@ const nextQuestion = () => {
       negativeText: "No",
       onPositiveClick: () => {
         userStore.subtractLife();
+
         if (userStore.lives === 0) {
+          if (quiz.correct === 0) {
+            if (userStore.achievementBadges.zeroPointsOnSingleQuiz.flag === 0) {
+              userStore.achievementBadges.zeroPointsOnSingleQuiz.flag = 1;
+            }
+          }
           router.push("/quiz-finished");
         } else {
           proceedToNext();
