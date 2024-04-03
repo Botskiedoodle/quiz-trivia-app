@@ -168,9 +168,12 @@ const proceedToNext = () => {
   }
   if (quiz.answered == quizStore.amount) {
     // quiz is finished
-    userStore.finishFlawlessly();
-    userStore.finishQuizOnce();
-    userStore.finishQuizAnyDifficulty();
+    if (userStore.lives != 0) {
+      userStore.finishFlawlessly();
+      userStore.finishQuizOnce();
+      userStore.finishQuizAnyDifficulty();
+    }
+
     router.push("/quiz-finished");
   }
 };
