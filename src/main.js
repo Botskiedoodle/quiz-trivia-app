@@ -7,7 +7,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "@/views/homePage.vue";
 import AchievementsPage from "@/views/achievementsPage.vue";
 import QuizPage from "@/views/quizPage.vue";
-import FinishQuiz from "@/views/finish.vue";
+import FinishQuiz from "@/views/finishPage.vue";
 import notFound from "@/views/notFound.vue";
 
 import { createPinia } from "pinia";
