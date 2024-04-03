@@ -3,12 +3,6 @@
     <vue-particles
       id="tsparticles"
       @particles-loaded="particlesLoaded"
-      url="http://foo.bar/particles.json"
-    />
-
-    <vue-particles
-      id="tsparticles"
-      @particles-loaded="particlesLoaded"
       :options="{
         background: {
           color: {
