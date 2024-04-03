@@ -43,7 +43,6 @@
                 style="transform: rotate(30deg)"
                 draggable="false"
               />
-              <span>Easy Peasy</span>
             </div>
             <div class="preset" @click="proceedWithPreset('medium')">
               <img
@@ -52,7 +51,6 @@
                 width="60"
                 draggable="false"
               />
-              <span>Aight</span>
             </div>
             <div class="preset" @click="proceedWithPreset('hard')">
               <img
@@ -61,7 +59,6 @@
                 width="60"
                 draggable="false"
               />
-              <span>Sheeesh</span>
             </div>
           </div>
         </div>

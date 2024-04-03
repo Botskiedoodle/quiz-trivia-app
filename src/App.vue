@@ -1,10 +1,6 @@
 <template>
   <div>
-    <vue-particles
-      id="tsparticles"
-      @particles-loaded="particlesLoaded"
-      :options="particleOptions"
-    />
+    <vue-particles id="tsparticles" :options="particleOptions" />
     <n-notification-provider placement="bottom-left">
       <n-message-provider>
         <n-dialog-provider>
@@ -25,9 +21,9 @@ import {
   NNotificationProvider
 } from "naive-ui";
 import { particleOptions } from "@/utility/particleOptions";
-const particlesLoaded = async (container) => {
-  console.log("Particles container loaded", container);
-};
+// const particlesLoaded = async (container) => {
+//   console.log("Particles container loaded", container);
+// };
 </script>
 <style scoped>
 .main {

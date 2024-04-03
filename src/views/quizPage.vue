@@ -109,7 +109,6 @@ const notification = useNotification();
 const displayNotification = () => {
   notification.success({
     title: "New achievement unlocked!",
-    duration: 3000,
     content: "View new achievements on achievements page!"
   });
 };
