@@ -9,6 +9,9 @@ import AchievementsPage from "@/views/achievementsPage.vue";
 import QuizPage from "@/views/quizPage.vue";
 import FinishQuiz from "@/views/finishPage.vue";
 import notFound from "@/views/notFound.vue";
+import Particles from "@tsparticles/vue3";
+//import { loadFull } from "tsparticles"; // if you are going to use `loadFull`, install the "tsparticles" package too.
+import { loadSlim } from "@tsparticles/slim"; // if you are going to use `loadSlim`, install the "@tsparticles/slim" package too.
 
 import { createPinia } from "pinia";
 const pinia = createPinia();
@@ -44,4 +47,12 @@ const router = createRouter({
   ]
 });
 
-createApp(App).use(router).use(pinia).mount("#app");
+createApp(App)
+  .use(router)
+  .use(pinia)
+  .use(Particles, {
+    init: async (engine) => {
+      await loadSlim(engine);
+    }
+  })
+  .mount("#app");
