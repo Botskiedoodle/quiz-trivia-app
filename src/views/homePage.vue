@@ -43,7 +43,6 @@
                 style="transform: rotate(30deg)"
                 draggable="false"
               />
-              <span>Easy Peasy</span>
             </div>
             <div class="preset" @click="proceedWithPreset('medium')">
               <img
@@ -52,7 +51,6 @@
                 width="60"
                 draggable="false"
               />
-              <span>Aight</span>
             </div>
             <div class="preset" @click="proceedWithPreset('hard')">
               <img
@@ -61,7 +59,6 @@
                 width="60"
                 draggable="false"
               />
-              <span>Sheeesh</span>
             </div>
           </div>
         </div>
@@ -119,17 +116,18 @@ import {
 } from "naive-ui";
 import { Settings, LogoGoogle } from "@vicons/ionicons5";
 import { reactive, ref } from "vue";
+import { useRouter } from "vue-router";
+
+import { displayConfetti } from "@/utility";
 import { useQuizStore } from "@/store/quiz.js";
 const quizStore = useQuizStore();
 
-import { displayConfetti } from "@/utility";
 displayConfetti();
 
 const goToAchievements = () => {
   router.push("/achievements");
 };
 
-import { useRouter } from "vue-router";
 const router = useRouter();
 const showModal = ref(false);
 
