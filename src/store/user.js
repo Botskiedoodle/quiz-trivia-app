@@ -1,7 +1,9 @@
 import { ref, reactive } from "vue";
 import { defineStore } from "pinia";
+import { useQuizStore } from "./quiz";
 
 export const useUserStore = defineStore("user", () => {
+  const quizStore = useQuizStore();
   const achievementBadges = ref({
     zeroPointsOnSingleQuiz: {
       flag: 0,
@@ -61,5 +63,52 @@ export const useUserStore = defineStore("user", () => {
     lives.value = 3;
   }
 
-  return { lives, subtractLife, initializeLives, achievementBadges, tracker };
+  function finishQuizOnce() {
+    if (achievementBadges.value.finishTheQuizOnce.flag === 0) {
+      achievementBadges.value.finishTheQuizOnce.flag = 1;
+    }
+  }
+
+  function finishQuizAnyDifficulty() {
+    let { difficulty } = quizStore;
+    if (difficulty === "easy") {
+      if (achievementBadges.value.finishTheQuizOnEasy.flag === 0) {
+        achievementBadges.value.finishTheQuizOnEasy.flag = 1;
+      }
+    } else if (difficulty === "medium") {
+      if (achievementBadges.value.finishTheQuizOnMedium.flag === 0) {
+        achievementBadges.value.finishTheQuizOnMedium.flag = 1;
+      }
+    } else if (difficulty === "hard") {
+      if (achievementBadges.value.finishTheQuizOnHard.flag === 0) {
+        achievementBadges.value.finishTheQuizOnHard.flag = 1;
+      }
+    }
+  }
+
+  function finishFlawlessly() {
+    if (lives.value === 3) {
+      if (achievementBadges.value.untouchable.flag === 0) {
+        achievementBadges.value.untouchable.flag = 1;
+      }
+    }
+  }
+
+  function checkForPoop() {
+    if (achievementBadges.value.zeroPointsOnSingleQuiz.flag === 0) {
+      achievementBadges.value.zeroPointsOnSingleQuiz.flag = 1;
+    }
+  }
+
+  return {
+    lives,
+    achievementBadges,
+    tracker,
+    subtractLife,
+    initializeLives,
+    finishQuizOnce,
+    finishQuizAnyDifficulty,
+    finishFlawlessly,
+    checkForPoop
+  };
 });

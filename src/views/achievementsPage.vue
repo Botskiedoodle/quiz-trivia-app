@@ -2,11 +2,7 @@
   <div class="container">
     <p class="title">Achievements</p>
     <div class="achievements">
-      <div
-        class="rotate"
-        v-for="achievement in achievements"
-        :key="achievement.id"
-      >
+      <div v-for="achievement in achievements" :key="achievement.id">
         <achievement-badge
           :flag="achievement.flag"
           :image="achievement.image"

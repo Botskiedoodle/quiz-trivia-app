@@ -120,6 +120,7 @@ import {
 import { Settings, LogoGoogle } from "@vicons/ionicons5";
 import { reactive, ref } from "vue";
 import { useQuizStore } from "@/store/quiz.js";
+
 const quizStore = useQuizStore();
 const goToAchievements = () => {
   router.push("/achievements");

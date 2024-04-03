@@ -90,12 +90,7 @@ import { NButton, useDialog, NResult, NIcon, NSpin } from "naive-ui";
 import { reactive, onMounted, onUpdated, ref } from "vue";
 import { useRouter } from "vue-router";
 import { PlaySkipForward, ExitOutline } from "@vicons/ionicons5";
-import {
-  finishQuizAnyDifficulty,
-  finishQuizOnce,
-  finishFlawlessly,
-  checkForPoop
-} from "@/utility";
+
 import { getQuizQuestions } from "@/api";
 
 import { useQuizStore } from "@/store/quiz.js";
@@ -173,9 +168,9 @@ const proceedToNext = () => {
   }
   if (quiz.answered == quizStore.amount) {
     // quiz is finished
-    finishFlawlessly();
-    finishQuizOnce();
-    finishQuizAnyDifficulty();
+    userStore.finishFlawlessly();
+    userStore.finishQuizOnce();
+    userStore.finishQuizAnyDifficulty();
     router.push("/quiz-finished");
   }
 };
@@ -200,7 +195,8 @@ const nextQuestion = () => {
 
         if (userStore.lives === 0) {
           if (quiz.correct === 0) {
-            checkForPoop();
+            userStore.checkForPoop();
+            console.log("poopy");
           }
           router.push("/quiz-finished");
         } else {
