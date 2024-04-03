@@ -8,7 +8,7 @@ export const particleOptions = {
   interactivity: {
     events: {
       onClick: {
-        enable: true,
+        enable: false,
         mode: "push"
       },
       onHover: {
@@ -55,7 +55,7 @@ export const particleOptions = {
       density: {
         enable: true
       },
-      value: 80
+      value: 100
     },
     opacity: {
       value: 0.5

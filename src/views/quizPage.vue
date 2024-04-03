@@ -87,21 +87,32 @@
 </template>
 <script setup>
 import { NButton, useDialog, NResult, NIcon, NSpin } from "naive-ui";
+import { useNotification } from "naive-ui";
+
 import { reactive, onMounted, onUpdated, ref } from "vue";
 import { useRouter } from "vue-router";
 import { PlaySkipForward, ExitOutline } from "@vicons/ionicons5";
-
 import { getQuizQuestions } from "@/api";
 
+import { useUserStore } from "@/store/user.js";
 import { useQuizStore } from "@/store/quiz.js";
+
 const quizStore = useQuizStore();
 
-import { useUserStore } from "@/store/user.js";
 const userStore = useUserStore();
 
 const router = useRouter();
 
 const dialog = useDialog();
+const notification = useNotification();
+
+const displayNotification = () => {
+  notification.success({
+    title: "New achievement unlocked!",
+    duration: 3000,
+    content: "View new achievements on achievements page!"
+  });
+};
 
 const buttonType = (correctAnswer, answer) => {
   if (!quiz.notAnswered) {
@@ -198,8 +209,7 @@ const nextQuestion = () => {
 
         if (userStore.lives === 0) {
           if (quiz.correct === 0) {
-            userStore.checkForPoop();
-            console.log("poopy");
+            if (userStore.checkForPoop()) displayNotification();
           }
           router.push("/quiz-finished");
         } else {

@@ -119,17 +119,18 @@ import {
 } from "naive-ui";
 import { Settings, LogoGoogle } from "@vicons/ionicons5";
 import { reactive, ref } from "vue";
+import { useRouter } from "vue-router";
+
+import { displayConfetti } from "@/utility";
 import { useQuizStore } from "@/store/quiz.js";
 const quizStore = useQuizStore();
 
-import { displayConfetti } from "@/utility";
 displayConfetti();
 
 const goToAchievements = () => {
   router.push("/achievements");
 };
 
-import { useRouter } from "vue-router";
 const router = useRouter();
 const showModal = ref(false);
 

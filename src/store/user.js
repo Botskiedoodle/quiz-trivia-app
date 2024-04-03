@@ -1,6 +1,7 @@
 import { ref, reactive } from "vue";
 import { defineStore } from "pinia";
 import { useQuizStore } from "./quiz";
+import { displayConfetti } from "@/utility";
 
 export const useUserStore = defineStore("user", () => {
   const quizStore = useQuizStore();
@@ -96,7 +97,9 @@ export const useUserStore = defineStore("user", () => {
 
   function checkForPoop() {
     if (achievementBadges.value.zeroPointsOnSingleQuiz.flag === 0) {
+      displayConfetti({ emojis: ["💩"] });
       achievementBadges.value.zeroPointsOnSingleQuiz.flag = 1;
+      return true;
     }
   }
 

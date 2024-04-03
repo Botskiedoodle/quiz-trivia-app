@@ -5,19 +5,25 @@
       @particles-loaded="particlesLoaded"
       :options="particleOptions"
     />
-    <n-message-provider>
-      <n-dialog-provider>
-        <div class="main">
-          <div class="app">
-            <router-view></router-view>
+    <n-notification-provider placement="bottom-left">
+      <n-message-provider>
+        <n-dialog-provider>
+          <div class="main">
+            <div class="app">
+              <router-view></router-view>
+            </div>
           </div>
-        </div>
-      </n-dialog-provider>
-    </n-message-provider>
+        </n-dialog-provider>
+      </n-message-provider>
+    </n-notification-provider>
   </div>
 </template>
 <script setup>
-import { NDialogProvider, NMessageProvider } from "naive-ui";
+import {
+  NDialogProvider,
+  NMessageProvider,
+  NNotificationProvider
+} from "naive-ui";
 import { particleOptions } from "@/utility/particleOptions";
 const particlesLoaded = async (container) => {
   console.log("Particles container loaded", container);
@@ -33,6 +39,7 @@ const particlesLoaded = async (container) => {
   z-index: 10;
   user-select: none;
   margin: 0.75rem;
+  overflow-x: hidden;
 }
 
 .main .app {

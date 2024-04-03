@@ -28,7 +28,7 @@ export const getRandomGif = async (result) => {
   try {
     const { data } = await axios.get(apiURL);
     const randomIndex = Math.floor(Math.random() * 50);
-    return data.data[randomIndex].images.fixed_height;
+    return data.data[randomIndex].images.fixed_width;
   } catch (error) {
     console.log(error);
   }
@@ -44,7 +44,7 @@ export const getLoadingGif = async () => {
   try {
     const { data } = await axios.get(apiURL);
     const randomIndex = Math.floor(Math.random() * 50);
-    return data.data[randomIndex].images.fixed_height;
+    return data.data[randomIndex].images.fixed_width;
   } catch (error) {
     console.log(error);
   }
