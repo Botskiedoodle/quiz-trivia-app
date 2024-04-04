@@ -7,7 +7,7 @@
           type="info"
           size="large"
           class="button"
-          @click="goToAchievements"
+          @click="handleShowSignInUpModal"
         >
           <template #icon>
             <n-icon size="1.5rem">
@@ -103,6 +103,7 @@
         </template>
       </n-card>
     </n-modal>
+    <sign-in-up v-model:show="showSignInUp" />
   </div>
 </template>
 <script setup>
@@ -112,15 +113,23 @@ import { useRouter } from "vue-router";
 
 import { displayConfetti } from "@/utility";
 import { useQuizStore } from "@/store/quiz.js";
+
+import SignInUp from "@/components/SignInUp.vue";
+
 const quizStore = useQuizStore();
 
 displayConfetti();
 
+const router = useRouter();
 const goToAchievements = () => {
   router.push("/achievements");
 };
 
-const router = useRouter();
+const showSignInUp = ref(false);
+const handleShowSignInUpModal = () => {
+  showSignInUp.value = true;
+};
+
 const showModal = ref(false);
 
 const customizeQuiz = () => {
