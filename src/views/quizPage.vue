@@ -11,7 +11,7 @@
       <div style="text-align: center">Fetching Questions...</div>
     </div>
 
-    <div v-else-if="!quiz.loading">
+    <div v-else-if="!quiz.loading && quiz.length != 0">
       <header class="question-progress">
         Question {{ quiz.answered + 1 }} of {{ quiz.content.length }}
       </header>
@@ -82,6 +82,10 @@
           </div>
         </div>
       </div>
+    </div>
+    <div v-else-if="quiz.loading && quiz.length === 0">
+      Failed to fetch quiz.
+      <n-button>Click here to reload!</n-button>
     </div>
   </div>
 </template>

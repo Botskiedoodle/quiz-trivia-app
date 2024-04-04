@@ -14,7 +14,7 @@
     <n-button type="info" @click="goBack" class="button">Go Back</n-button>
   </div>
   <n-modal v-model:show="achievementModal.show">
-    <n-card :bordered="true" size="large">
+    <n-card :bordered="true" size="large" style="width: 24rem">
       <div class="modal">
         <div class="modal-title">{{ achievementModal.title }}</div>
         <img
