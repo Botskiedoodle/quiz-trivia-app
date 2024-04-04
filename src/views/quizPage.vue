@@ -90,7 +90,6 @@
   </div>
 </template>
 <script setup>
-import { NButton, useDialog, NResult, NIcon, NSpin } from "naive-ui";
 import { useNotification } from "naive-ui";
 
 import { reactive, onMounted, onUpdated, ref } from "vue";

@@ -12,7 +12,7 @@ import notFound from "@/views/notFound.vue";
 import Particles from "@tsparticles/vue3";
 //import { loadFull } from "tsparticles"; // if you are going to use `loadFull`, install the "tsparticles" package too.
 import { loadSlim } from "@tsparticles/slim"; // if you are going to use `loadSlim`, install the "@tsparticles/slim" package too.
-
+import Naive from "naive-ui";
 import { createPinia } from "pinia";
 const pinia = createPinia();
 
@@ -50,6 +50,7 @@ const router = createRouter({
 createApp(App)
   .use(router)
   .use(pinia)
+  .use(Naive)
   .use(Particles, {
     init: async (engine) => {
       await loadSlim(engine);

@@ -33,7 +33,6 @@
   </n-modal>
 </template>
 <script setup>
-import { NButton, NModal, NCard } from "naive-ui";
 import { useRouter } from "vue-router";
 import achievementBadge from "@/components/achievementBadge.vue";
 import { useUserStore } from "@/store/user.js";

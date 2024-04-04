@@ -106,14 +106,6 @@
   </div>
 </template>
 <script setup>
-import {
-  NIcon,
-  NButton,
-  NModal,
-  NCard,
-  NRadioButton,
-  NRadioGroup
-} from "naive-ui";
 import { Settings, LogoGoogle } from "@vicons/ionicons5";
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
