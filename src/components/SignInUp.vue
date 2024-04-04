@@ -17,7 +17,7 @@
                   type="text"
                   v-model="logInInfo.email"
                   placeholder="Enter Email Address"
-                  maxlength="20"
+                  maxlength="50"
                 />
               </n-form-item-row>
               <n-form-item-row label="Password">
@@ -35,16 +35,35 @@
           <n-tab-pane name="signup" tab="Sign up">
             <n-form>
               <n-form-item-row label="Email Address">
-                <n-input />
+                <n-input
+                  type="text"
+                  v-model:value="logInInfo.email"
+                  placeholder="Enter Email Address"
+                  maxlength="50"
+                />
               </n-form-item-row>
               <n-form-item-row label="Password">
-                <n-input />
+                <n-input
+                  type="password"
+                  v-model:value="logInInfo.password"
+                  placeholder="Enter Password"
+                  maxlength="20"
+                  show-password-on="click"
+                />
               </n-form-item-row>
               <n-form-item-row label="Reenter Password">
                 <n-input />
               </n-form-item-row>
             </n-form>
-            <n-button type="primary" block secondary strong> Sign up </n-button>
+            <n-button
+              type="primary"
+              block
+              secondary
+              strong
+              @click="handleRegisterWithEmailPassword"
+            >
+              Sign up
+            </n-button>
           </n-tab-pane>
         </n-tabs>
       </n-card>
@@ -53,14 +72,29 @@
 </template>
 
 <script setup>
-import { defineModel, reactive } from "vue";
+import { defineModel, reactive, ref } from "vue";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const show = defineModel("show");
-
-const logInInfo = reactive({
+const auth = getAuth();
+const logInInfo = ref({
   email: "",
   password: "",
   confirmPassword: ""
 });
+
+const handleRegisterWithEmailPassword = () => {
+  console.log(logInInfo.value);
+  createUserWithEmailAndPassword(
+    auth,
+    logInInfo.value.email,
+    logInInfo.value.password
+  ).then((response) => {
+    console.log("Successfully Signed In!");
+    router.push("/achievements");
+  });
+};
 </script>
 
 <style lang="scss" scoped></style>
