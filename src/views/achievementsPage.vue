@@ -12,6 +12,7 @@
       </div>
     </div>
     <n-button type="info" @click="goBack" class="button">Go Back</n-button>
+    <n-button @click="handleSignOut">Sign out</n-button>
   </div>
   <n-modal v-model:show="achievementModal.show">
     <n-card :bordered="true" size="large" style="width: 24rem">
@@ -36,8 +37,10 @@
 import { useRouter } from "vue-router";
 import achievementBadge from "@/components/achievementBadge.vue";
 import { useUserStore } from "@/store/user.js";
-import { reactive, computed } from "vue";
+import { reactive, computed, onMounted } from "vue";
 import { displayConfetti } from "@/utility";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+const isLoggedIn = ref(false);
 
 const userStore = useUserStore();
 const achievements = userStore.achievementBadges;
@@ -67,6 +70,24 @@ const handleCloseModal = () => {
 const router = useRouter();
 const goBack = () => {
   router.push("/");
+};
+let auth;
+onMounted(() => {
+  auth = getAuth();
+  onAuthStateChanged(auth, (user) => {
+    isLoggedIn.value = user ? true : false;
+    // if(user) {
+    //   isLoggedIn.value = true
+    // } else {
+    //   isLoggedIn.value = false
+    // }
+  });
+});
+
+const handleSignOut = () => {
+  signOut(auth).then(() => {
+    router.push("/");
+  });
 };
 </script>
 <style lang="scss" scoped>
