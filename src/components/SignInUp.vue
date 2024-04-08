@@ -31,15 +31,26 @@
               </n-form-item-row>
             </n-form>
             <div v-if="errMsg">{{ errMsg }}</div>
-            <n-button
-              type="primary"
-              block
-              secondary
-              strong
-              @click="handleSignInWithEmailPassword"
-            >
-              Sign In
-            </n-button>
+            <div class="cta-container">
+              <n-button
+                type="primary"
+                block
+                secondary
+                strong
+                @click="handleSignInWithEmailPassword"
+              >
+                Sign In
+              </n-button>
+              <n-button
+                type="primary"
+                block
+                secondary
+                strong
+                @click="handleSignInWithGoogle"
+              >
+                Sign In With Google
+              </n-button>
+            </div>
           </n-tab-pane>
           <n-tab-pane name="signup" tab="Sign up">
             <n-form>
@@ -85,7 +96,9 @@ import { defineModel, reactive, ref } from "vue";
 import {
   getAuth,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup
 } from "firebase/auth";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -154,6 +167,25 @@ const handleSignInWithEmailPassword = async () => {
     errMessages(error);
   }
 };
+
+const handleSignInWithGoogle = async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+    const res = await signInWithPopup(getAuth(), provider);
+    if (res) {
+      // console.log(res.user);
+      router.push("/achievements");
+    }
+  } catch (error) {
+    errMessages(error);
+  }
+};
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.cta-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+</style>
