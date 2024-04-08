@@ -36,12 +36,14 @@
   </n-modal>
 </template>
 <script setup>
+import { ref, reactive, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useDialog } from "naive-ui";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+
 import achievementBadge from "@/components/achievementBadge.vue";
 import { useUserStore } from "@/store/user.js";
-import { ref, reactive, computed, onMounted } from "vue";
 import { displayConfetti } from "@/utility";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 const isLoggedIn = ref(false);
 
 const userStore = useUserStore();
@@ -73,11 +75,22 @@ const router = useRouter();
 const goBack = () => {
   router.push("/");
 };
+
 let auth;
+const dialog = useDialog();
 const handleSignOut = () => {
-  auth = getAuth();
-  signOut(auth).then(() => {
-    router.push("/");
+  dialog.warning({
+    title: "Confirm",
+    content:
+      "Are you sure you want to log out? Your progress will not be saved",
+    positiveText: "Sure",
+    negativeText: "Not Sure",
+    onPositiveClick: () => {
+      auth = getAuth();
+      signOut(auth).then(() => {
+        router.push("/");
+      });
+    }
   });
 };
 </script>

@@ -124,7 +124,9 @@ const router = useRouter();
 const goToAchievements = () => {
   router.push("/achievements");
 };
+
 let auth;
+
 const isLoggedIn = ref(false);
 onMounted(() => {
   auth = getAuth();
@@ -132,6 +134,7 @@ onMounted(() => {
     isLoggedIn.value = user ? true : false;
   });
 });
+
 const showSignInUp = ref(false);
 const handleShowSignInUpModal = () => {
   if (isLoggedIn.value) {

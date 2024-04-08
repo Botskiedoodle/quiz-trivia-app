@@ -37,6 +37,8 @@
                 block
                 secondary
                 strong
+                :disabled="loading.google"
+                :loading="loading.email"
                 @click="handleSignInWithEmailPassword"
               >
                 Sign In
@@ -46,6 +48,8 @@
                 block
                 secondary
                 strong
+                :disabled="loading.email"
+                :loading="loading.google"
                 @click="handleSignInWithGoogle"
               >
                 Sign In With Google
@@ -71,7 +75,7 @@
                   show-password-on="click"
                 />
               </n-form-item-row>
-              <n-form-item-row label="Reenter Password">
+              <n-form-item-row label="Confirm Password">
                 <n-input />
               </n-form-item-row>
             </n-form>
@@ -81,6 +85,7 @@
               secondary
               strong
               @click="handleRegisterWithEmailPassword"
+              :loading="loading.email"
             >
               Sign up
             </n-button>
@@ -93,6 +98,8 @@
 
 <script setup>
 import { defineModel, reactive, ref } from "vue";
+import { useNotification } from "naive-ui";
+
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -104,37 +111,22 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const show = defineModel("show");
 const errMsg = ref("");
-const logInInfo = ref({
+const loading = reactive({
+  email: false,
+  google: false
+});
+const logInInfo = reactive({
   email: "",
   password: "",
   confirmPassword: ""
 });
-
-const handleRegisterWithEmailPassword = async () => {
-  const auth = getAuth();
-
-  try {
-    const res = await createUserWithEmailAndPassword(
-      auth,
-      logInInfo.value.email,
-      logInInfo.value.password
-    );
-    if (res) {
-      router.push("/achievements");
-    }
-  } catch (error) {
-    console.log(error);
-  }
-  // createUserWithEmailAndPassword(
-  //   auth,
-  //   logInInfo.value.email,
-  //   logInInfo.value.password
-  // ).then((response) => {
-  //   console.log("Successfully Signed In!");
-  //   router.push("/achievements");
-  // });
+const welcomeUser = (name = "guest!") => {
+  notification.success({
+    title: "Sign in successful!",
+    content: `Welcome ${name}!`,
+    duration: 3000
+  });
 };
-
 const errMessages = (err) => {
   switch (err) {
     case "auth/invalid-email":
@@ -151,33 +143,62 @@ const errMessages = (err) => {
       break;
   }
 };
+const notification = useNotification();
+const handleRegisterWithEmailPassword = async () => {
+  const auth = getAuth();
+  try {
+    loading.email = true;
+    const res = await createUserWithEmailAndPassword(
+      auth,
+      logInInfo.email,
+      logInInfo.password
+    );
+    if (res) {
+      welcomeUser(logInInfo.value.email);
+      router.push("/achievements");
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    loading.email = false;
+  }
+};
 
 const handleSignInWithEmailPassword = async () => {
   const auth = getAuth();
   try {
+    loading.email = true;
+
     const res = await signInWithEmailAndPassword(
       auth,
-      logInInfo.value.email,
-      logInInfo.value.password
+      logInInfo.email,
+      logInInfo.password
     );
     if (res) {
+      welcomeUser(logInInfo.email);
       router.push("/achievements");
     }
   } catch (error) {
     errMessages(error);
+  } finally {
+    loading.email = false;
   }
 };
 
 const handleSignInWithGoogle = async () => {
   try {
+    loading.google = true;
     const provider = new GoogleAuthProvider();
     const res = await signInWithPopup(getAuth(), provider);
     if (res) {
-      // console.log(res.user);
+      // console.log(res.user.displayName, "asdf");
+      welcomeUser(res.user.displayName);
       router.push("/achievements");
     }
   } catch (error) {
     errMessages(error);
+  } finally {
+    loading.google = false;
   }
 };
 </script>
