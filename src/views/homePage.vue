@@ -108,9 +108,9 @@
 </template>
 <script setup>
 import { Settings, LogoGoogle } from "@vicons/ionicons5";
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { displayConfetti } from "@/utility";
 import { useQuizStore } from "@/store/quiz.js";
 
@@ -124,10 +124,21 @@ const router = useRouter();
 const goToAchievements = () => {
   router.push("/achievements");
 };
-
+let auth;
+const isLoggedIn = ref(false);
+onMounted(() => {
+  auth = getAuth();
+  onAuthStateChanged(auth, (user) => {
+    isLoggedIn.value = user ? true : false;
+  });
+});
 const showSignInUp = ref(false);
 const handleShowSignInUpModal = () => {
-  showSignInUp.value = true;
+  if (isLoggedIn.value) {
+    router.push("/achievements");
+  } else {
+    showSignInUp.value = true;
+  }
 };
 
 const showModal = ref(false);

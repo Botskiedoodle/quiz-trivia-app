@@ -151,7 +151,6 @@ const handleSignInWithEmailPassword = async () => {
       router.push("/achievements");
     }
   } catch (error) {
-    console.log(error);
     errMessages(error);
   }
 };

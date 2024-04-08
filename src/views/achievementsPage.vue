@@ -74,19 +74,8 @@ const goBack = () => {
   router.push("/");
 };
 let auth;
-onMounted(() => {
-  auth = getAuth();
-  onAuthStateChanged(auth, (user) => {
-    isLoggedIn.value = user ? true : false;
-    // if(user) {
-    //   isLoggedIn.value = true
-    // } else {
-    //   isLoggedIn.value = false
-    // }
-  });
-});
-
 const handleSignOut = () => {
+  auth = getAuth();
   signOut(auth).then(() => {
     router.push("/");
   });
