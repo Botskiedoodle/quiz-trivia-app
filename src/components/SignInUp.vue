@@ -11,24 +11,26 @@
           pane-style="padding-left: 4px; padding-right: 4px; box-sizing: border-box;"
         >
           <n-tab-pane name="signin" tab="Sign in">
-            <n-form>
-              <n-form-item-row label="Email Address">
+            <n-form ref="logInFormRef" :rules="logInRules" :model="logInInfo">
+              <n-form-item label="Email Address" path="email">
                 <n-input
                   type="text"
                   v-model:value="logInInfo.email"
+                  :disabled="loading.google"
                   placeholder="Enter Email Address"
                   maxlength="50"
                 />
-              </n-form-item-row>
-              <n-form-item-row label="Password">
+              </n-form-item>
+              <n-form-item label="Password" path="password">
                 <n-input
                   type="password"
                   v-model:value="logInInfo.password"
+                  :disabled="loading.google"
                   placeholder="Enter Password"
                   maxlength="20"
                   show-password-on="click"
                 />
-              </n-form-item-row>
+              </n-form-item>
             </n-form>
             <div v-if="errMsg">{{ errMsg }}</div>
             <div class="cta-container">
@@ -57,27 +59,37 @@
             </div>
           </n-tab-pane>
           <n-tab-pane name="signup" tab="Sign up">
-            <n-form>
-              <n-form-item-row label="Email Address">
+            <n-form
+              :ref="signUpFormRef"
+              :rules="signUpRules"
+              :model="signUpInfo"
+            >
+              <n-form-item label="Email Address" path="email">
                 <n-input
                   type="text"
-                  v-model:value="logInInfo.email"
+                  v-model:value="signUpInfo.email"
                   placeholder="Enter Email Address"
                   maxlength="50"
                 />
-              </n-form-item-row>
-              <n-form-item-row label="Password">
+              </n-form-item>
+              <n-form-item label="Password" path="password">
                 <n-input
                   type="password"
-                  v-model:value="logInInfo.password"
+                  v-model:value="signUpInfo.password"
                   placeholder="Enter Password"
                   maxlength="20"
                   show-password-on="click"
                 />
-              </n-form-item-row>
-              <n-form-item-row label="Confirm Password">
-                <n-input />
-              </n-form-item-row>
+              </n-form-item>
+              <n-form-item label="Confirm Password" path="confirmPassword">
+                <n-input
+                  type="password"
+                  v-model:value="signUpInfo.confirmPassword"
+                  placeholder="Confirm Password"
+                  maxlength="20"
+                  show-password-on="click"
+                />
+              </n-form-item>
             </n-form>
             <n-button
               type="primary"
@@ -99,7 +111,6 @@
 <script setup>
 import { defineModel, reactive, ref } from "vue";
 import { useNotification } from "naive-ui";
-
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -111,15 +122,96 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const show = defineModel("show");
 const errMsg = ref("");
-const loading = reactive({
-  email: false,
-  google: false
+
+const logInFormRef = ref();
+const logInInfo = ref({
+  email: "",
+  password: ""
 });
-const logInInfo = reactive({
+const checkPasswordLength = (rule, value) => {
+  return value.length > 8;
+};
+
+const logInRules = {
+  email: {
+    required: true,
+    message: "Please input your email address",
+    trigger: "blur"
+  },
+  password: [
+    {
+      required: true,
+      message: "Please input your password",
+      trigger: "blur"
+    },
+    {
+      validator: checkPasswordLength,
+      message: "Password must be atleast 8 characters long.",
+      trigger: ["input", "blur"]
+    }
+  ]
+};
+
+const signUpFormRef = ref();
+const signUpInfo = reactive({
   email: "",
   password: "",
   confirmPassword: ""
 });
+
+const validatePasswordStartsWith = (rule, value) => {
+  return (
+    !!signUpInfo.password &&
+    signUpInfo.password.startsWith(value) &&
+    signUpInfo.password.length >= value.length
+  );
+};
+
+const validatePasswordSame = (rule, value) => {
+  return value === signUpInfo.password;
+};
+const signUpRules = {
+  email: {
+    required: true,
+    message: "Please input your email address",
+    trigger: "blur"
+  },
+  password: [
+    {
+      required: true,
+      message: "Please input your password",
+      trigger: ["input", "blur"]
+    },
+    {
+      validator: checkPasswordLength,
+      message: "Password must be 8 characters long.",
+      trigger: ["input", "blur"]
+    }
+  ],
+  confirmPassword: [
+    {
+      required: true,
+      message: "Please re-enter password!",
+      trigger: ["input", "blur"]
+    },
+    {
+      validator: validatePasswordStartsWith,
+      message: "Password is not the same as re-entered password!",
+      trigger: "input"
+    },
+    {
+      validator: validatePasswordSame,
+      message: "Password is not the same as re-entered password!",
+      trigger: ["blur", "password-input"]
+    }
+  ]
+};
+
+const loading = reactive({
+  email: false,
+  google: false
+});
+
 const welcomeUser = (name = "guest!") => {
   notification.success({
     title: "Sign in successful!",
@@ -167,17 +259,22 @@ const handleRegisterWithEmailPassword = async () => {
 const handleSignInWithEmailPassword = async () => {
   const auth = getAuth();
   try {
-    loading.email = true;
-
-    const res = await signInWithEmailAndPassword(
-      auth,
-      logInInfo.email,
-      logInInfo.password
-    );
-    if (res) {
-      welcomeUser(logInInfo.email);
-      router.push("/achievements");
-    }
+    await logInFormRef.value?.validate((e) => {
+      if (!e) {
+        loading.email = true;
+        const res = signInWithEmailAndPassword(
+          auth,
+          logInInfo.email,
+          logInInfo.password
+        );
+        if (res) {
+          welcomeUser(logInInfo.email);
+          router.push("/achievements");
+        }
+      } else {
+        console.log(e);
+      }
+    });
   } catch (error) {
     errMessages(error);
   } finally {

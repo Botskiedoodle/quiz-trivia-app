@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="cta-container">
-      <n-button type="info" @click="goBack" class="button">Go Back</n-button>
+      <n-button type="info" @click="goBack">Go Back</n-button>
       <n-button type="error" @click="handleSignOut">Sign out</n-button>
     </div>
   </div>
