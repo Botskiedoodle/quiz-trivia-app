@@ -11,7 +11,7 @@
           pane-style="padding-left: 4px; padding-right: 4px; box-sizing: border-box;"
         >
           <n-tab-pane name="signin" tab="Sign in">
-            <n-form ref="logInFormRef" :rules="logInRules" :model="logInInfo">
+            <!-- <n-form ref="logInFormRef" :rules="logInRules" :model="logInInfo">
               <n-form-item label="Email Address" path="email">
                 <n-input
                   type="text"
@@ -56,7 +56,7 @@
               >
                 Sign In With Google
               </n-button>
-            </div>
+            </div> -->
           </n-tab-pane>
           <n-tab-pane name="signup" tab="Sign up">
             <n-form
@@ -119,6 +119,7 @@ import {
   signInWithPopup
 } from "firebase/auth";
 import { useRouter } from "vue-router";
+import SignInUp from "@/components/SignInUp/index.vue";
 const router = useRouter();
 const show = defineModel("show");
 const errMsg = ref("");
@@ -244,11 +245,11 @@ const handleRegisterWithEmailPassword = async () => {
         loading.email = true;
         const res = createUserWithEmailAndPassword(
           auth,
-          logInInfo.email,
-          logInInfo.password
+          signUpInfo.email,
+          signUpInfo.password
         );
         if (res) {
-          welcomeUser(logInInfo.value.email);
+          welcomeUser(signUpInfo.email);
           router.push("/achievements");
         }
       } else {

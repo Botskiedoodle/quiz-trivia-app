@@ -115,7 +115,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { displayConfetti } from "@/utility";
 import { useQuizStore } from "@/store/quiz.js";
 
-import SignInUp from "@/components/SignInUp.vue";
+import SignInUp from "@/components/SignInUp/index.vue";
 
 const quizStore = useQuizStore();
 
