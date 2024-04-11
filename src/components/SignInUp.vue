@@ -239,16 +239,22 @@ const notification = useNotification();
 const handleRegisterWithEmailPassword = async () => {
   const auth = getAuth();
   try {
-    loading.email = true;
-    const res = await createUserWithEmailAndPassword(
-      auth,
-      logInInfo.email,
-      logInInfo.password
-    );
-    if (res) {
-      welcomeUser(logInInfo.value.email);
-      router.push("/achievements");
-    }
+    await signUpFormRef.value?.validate((e) => {
+      if (!e) {
+        loading.email = true;
+        const res = createUserWithEmailAndPassword(
+          auth,
+          logInInfo.email,
+          logInInfo.password
+        );
+        if (res) {
+          welcomeUser(logInInfo.value.email);
+          router.push("/achievements");
+        }
+      } else {
+        console.log(e);
+      }
+    });
   } catch (error) {
     console.log(error);
   } finally {
