@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import HomePage from "@/views/homePage.vue";
+import HomePage from "@/views/HomePage.vue";
 export const routes = createRouter({
   history: createWebHistory(),
   routes: [
@@ -12,7 +12,7 @@ export const routes = createRouter({
     {
       path: "/achievements",
       name: "Achievements",
-      component: () => import("../views/achievementsPage.vue"),
+      component: () => import("../views/AchievementsPage.vue"),
       meta: {
         requiresAuth: true
       }
@@ -20,17 +20,17 @@ export const routes = createRouter({
     {
       path: "/quiz",
       name: "Quiz",
-      component: () => import("../views/quizPage.vue")
+      component: () => import("../views/QuizPage.vue")
     },
     {
       path: "/quiz-finished",
       name: "Finish",
-      component: () => import("../views/finishPage.vue")
+      component: () => import("../views/FinishPage.vue")
     },
     {
       path: "/:catchAll(.*)",
       name: "NotFound",
-      component: () => import("../views/notFound.vue")
+      component: () => import("../views/NotFound.vue")
     }
   ]
 });
