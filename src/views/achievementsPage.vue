@@ -11,7 +11,10 @@
         />
       </div>
     </div>
-    <n-button type="info" @click="goBack" class="button">Go Back</n-button>
+    <div class="cta-container">
+      <n-button type="info" @click="goBack">Go Back</n-button>
+      <n-button type="error" @click="handleSignOut">Sign out</n-button>
+    </div>
   </div>
   <n-modal v-model:show="achievementModal.show">
     <n-card :bordered="true" size="large" style="width: 24rem">
@@ -33,12 +36,15 @@
   </n-modal>
 </template>
 <script setup>
-import { NButton, NModal, NCard } from "naive-ui";
+import { ref, reactive, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useDialog } from "naive-ui";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+
 import achievementBadge from "@/components/achievementBadge.vue";
 import { useUserStore } from "@/store/user.js";
-import { reactive, computed } from "vue";
 import { displayConfetti } from "@/utility";
+const isLoggedIn = ref(false);
 
 const userStore = useUserStore();
 const achievements = userStore.achievementBadges;
@@ -68,6 +74,24 @@ const handleCloseModal = () => {
 const router = useRouter();
 const goBack = () => {
   router.push("/");
+};
+
+let auth;
+const dialog = useDialog();
+const handleSignOut = () => {
+  dialog.warning({
+    title: "Confirm",
+    content:
+      "Are you sure you want to log out? Your progress will not be saved",
+    positiveText: "Sure",
+    negativeText: "Not Sure",
+    onPositiveClick: () => {
+      auth = getAuth();
+      signOut(auth).then(() => {
+        router.push("/");
+      });
+    }
+  });
 };
 </script>
 <style lang="scss" scoped>
@@ -101,6 +125,12 @@ const goBack = () => {
     font-weight: 600;
     font-size: 2rem;
   }
+}
+
+.cta-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .rotate {

@@ -23,8 +23,6 @@
   </div>
 </template>
 <script setup>
-import { NButton } from "naive-ui";
-
 import { useQuizStore } from "@/store/quiz.js";
 const quizStore = useQuizStore();
 
