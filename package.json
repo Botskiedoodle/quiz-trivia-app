@@ -12,10 +12,11 @@
     "@tsparticles/slim": "^3.3.0",
     "@tsparticles/vue3": "^3.0.1",
     "axios": "^1.6.2",
+    "firebase": "^10.10.0",
     "js-confetti": "^0.12.0",
     "pinia": "^2.1.7",
     "pnpm": "^8.15.6",
-    "vue": "^3.3.8",
+    "vue": "^3.4.21",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {

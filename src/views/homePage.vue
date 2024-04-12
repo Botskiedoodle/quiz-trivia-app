@@ -7,15 +7,11 @@
           type="info"
           size="large"
           class="button"
-          @click="goToAchievements"
+          @click="handleShowSignInUpModal"
         >
-          <template #icon>
-            <n-icon size="1.5rem">
-              <logo-google />
-            </n-icon>
-          </template>
-          Log in to earn badges!</n-button
-        >
+          <div v-if="isLoggedIn">View achievements!</div>
+          <div v-else>Log in to unlock achievements!</div>
+        </n-button>
       </div>
       <div class="sub-main">
         <n-button
@@ -103,32 +99,47 @@
         </template>
       </n-card>
     </n-modal>
+    <sign-in-up v-model:show="showSignInUp" />
   </div>
 </template>
 <script setup>
-import {
-  NIcon,
-  NButton,
-  NModal,
-  NCard,
-  NRadioButton,
-  NRadioGroup
-} from "naive-ui";
 import { Settings, LogoGoogle } from "@vicons/ionicons5";
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { displayConfetti } from "@/utility";
 import { useQuizStore } from "@/store/quiz.js";
+
+import SignInUp from "@/components/SignInUp/index.vue";
+
 const quizStore = useQuizStore();
 
 displayConfetti();
 
+const router = useRouter();
 const goToAchievements = () => {
   router.push("/achievements");
 };
 
-const router = useRouter();
+let auth;
+
+const isLoggedIn = ref(false);
+onMounted(() => {
+  auth = getAuth();
+  onAuthStateChanged(auth, (user) => {
+    isLoggedIn.value = user ? true : false;
+  });
+});
+
+const showSignInUp = ref(false);
+const handleShowSignInUpModal = () => {
+  if (isLoggedIn.value) {
+    router.push("/achievements");
+  } else {
+    showSignInUp.value = true;
+  }
+};
+
 const showModal = ref(false);
 
 const customizeQuiz = () => {
