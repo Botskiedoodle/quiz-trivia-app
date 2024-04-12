@@ -41,7 +41,7 @@ import { useRouter } from "vue-router";
 import { useDialog } from "naive-ui";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 
-import achievementBadge from "@/components/achievementBadge.vue";
+import achievementBadge from "@/components/AchievementBadge/index.vue";
 import { useUserStore } from "@/store/user.js";
 import { displayConfetti } from "@/utility";
 const isLoggedIn = ref(false);

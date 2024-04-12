@@ -37,8 +37,8 @@ import {
   signInWithPopup
 } from "firebase/auth";
 import { useRouter } from "vue-router";
-import signIn from "./components/signIn.vue";
-import signUp from "./components/signUp.vue";
+import SignIn from "./components/SignIn.vue";
+import SignUp from "./components/SignUp.vue";
 const message = useMessage();
 const router = useRouter();
 const show = defineModel("show");

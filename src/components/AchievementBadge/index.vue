@@ -5,7 +5,7 @@
       <span class="achievement-title">{{ title }}</span>
     </div>
     <div v-else class="achievement">
-      <img width="60" src="../assets/lock.png" alt="" />
+      <img width="60" src="../../assets/lock.png" alt="" />
       <span class="achievement-title"></span>
     </div>
   </div>
