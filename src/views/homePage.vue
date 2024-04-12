@@ -9,11 +9,6 @@
           class="button"
           @click="handleShowSignInUpModal"
         >
-          <!-- <template #icon>
-            <n-icon size="1.5rem">
-              <logo-google />
-            </n-icon>
-          </template> -->
           <div v-if="isLoggedIn">View achievements!</div>
           <div v-else>Log in to unlock achievements!</div>
         </n-button>

@@ -28,7 +28,7 @@
 
 <script setup>
 import { defineModel, reactive, ref } from "vue";
-import { useNotification } from "naive-ui";
+import { useNotification, useMessage } from "naive-ui";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -39,7 +39,7 @@ import {
 import { useRouter } from "vue-router";
 import signIn from "./components/signIn.vue";
 import signUp from "./components/signUp.vue";
-
+const message = useMessage();
 const router = useRouter();
 const show = defineModel("show");
 
@@ -61,13 +61,19 @@ const errMsg = ref("");
 const errMessages = (err) => {
   switch (err) {
     case "auth/invalid-email":
-      errMsg.value = "Invalid email";
+      errMsg.value = "Invalid user account";
       break;
     case "auth/user-not-found":
       errMsg.value = "No account with that email was found";
       break;
-    case "auth/wrong-password":
+    case "auth/invalid-credential":
       errMsg.value = "Incorrect password";
+      break;
+    case "auth/email-already-in-use":
+      errMsg.value = "Account already in use";
+      break;
+    case "auth/too-many-requests":
+      errMsg.value = "Too many log in request. Please try again later.";
       break;
     default:
       errMsg.value = "Email or password is incorrect";
@@ -90,7 +96,8 @@ const handleRegisterWithEmailPassword = async (signUpInfo) => {
       router.push("/achievements");
     }
   } catch (error) {
-    console.log(error);
+    errMessages(error.code);
+    message.warning(errMsg.value);
   }
 };
 
@@ -107,7 +114,8 @@ const handleSignInWithEmailPassword = async (logInInfo) => {
       router.push("/achievements");
     }
   } catch (error) {
-    errMessages(error);
+    errMessages(error.code);
+    message.warning(errMsg.value);
   }
 };
 
@@ -122,6 +130,7 @@ const handleSignInWithGoogle = async () => {
     }
   } catch (error) {
     errMessages(error);
+    message.warning(errMsg.value);
   } finally {
     loading.google = false;
   }

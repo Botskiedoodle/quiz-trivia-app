@@ -20,7 +20,6 @@
       />
     </n-form-item>
   </n-form>
-  <div v-if="errMsg">{{ errMsg }}</div>
 
   <div class="cta-container">
     <n-button
@@ -63,8 +62,6 @@ import { LogoGoogle } from "@vicons/ionicons5";
 
 const router = useRouter();
 const loading = defineModel("loading");
-
-const errMsg = ref("");
 
 const logInFormRef = ref();
 const logInInfo = reactive({
