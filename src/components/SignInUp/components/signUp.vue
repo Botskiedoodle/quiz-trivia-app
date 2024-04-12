@@ -1,16 +1,18 @@
 <template>
-  <n-form :ref="signUpFormRef" :rules="signUpRules" :model="signUpInfo">
+  <n-form ref="signUpFormRef" :rules="signUpRules" :model="signUpInfo">
     <n-form-item label="Email Address" path="email">
       <n-input
         type="text"
         v-model:value="signUpInfo.email"
         placeholder="Enter Email Address"
+        autocomplete="username"
         maxlength="50"
       />
     </n-form-item>
     <n-form-item label="Password" path="password">
       <n-input
         type="password"
+        autocomplete="new-password"
         v-model:value="signUpInfo.password"
         placeholder="Enter Password"
         maxlength="20"
@@ -20,6 +22,7 @@
     <n-form-item label="Confirm Password" path="confirmPassword">
       <n-input
         type="password"
+        autocomplete="new-password"
         v-model:value="signUpInfo.confirmPassword"
         placeholder="Confirm Password"
         maxlength="20"
@@ -30,10 +33,10 @@
   <n-button
     type="primary"
     block
-    secondary
     strong
     @click="handleSignUpWithEmail"
     :loading="loading.email"
+    round
   >
     Sign up
   </n-button>
@@ -60,6 +63,10 @@ const validatePasswordStartsWith = (rule, value) => {
 const validatePasswordSame = (rule, value) => {
   return value === signUpInfo.password;
 };
+const checkPasswordLength = (rule, value) => {
+  return value.length >= 8;
+};
+
 const signUpRules = {
   email: {
     required: true,
@@ -97,6 +104,9 @@ const signUpRules = {
   ]
 };
 
+const loading = reactive({
+  email: false
+});
 const handleSignUpWithEmail = async () => {
   try {
     loading.email = true;

@@ -14,6 +14,7 @@
             <sign-in
               @signIn="handleSignInWithEmailPassword"
               @googleSignIn="handleSignInWithGoogle"
+              v-model:loading="loading"
             />
           </n-tab-pane>
           <n-tab-pane name="signup" tab="Sign up">
@@ -37,6 +38,7 @@ import {
 } from "firebase/auth";
 import { useRouter } from "vue-router";
 import signIn from "./components/signIn.vue";
+import signUp from "./components/signUp.vue";
 
 const router = useRouter();
 const show = defineModel("show");
@@ -53,6 +55,8 @@ const welcomeUser = (name = "guest!") => {
     duration: 3000
   });
 };
+
+const errMsg = ref("");
 
 const errMessages = (err) => {
   switch (err) {
@@ -73,12 +77,13 @@ const errMessages = (err) => {
 
 const notification = useNotification();
 const handleRegisterWithEmailPassword = async (signUpInfo) => {
+  console.log(signUpInfo.email, "info for sign up");
   const auth = getAuth();
   try {
-    const res = createUserWithEmailAndPassword(
+    const res = await createUserWithEmailAndPassword(
       auth,
-      signUpInfo.value.email,
-      signUpInfo.value.password
+      signUpInfo.email,
+      signUpInfo.password
     );
     if (res) {
       welcomeUser(signUpInfo.email);
@@ -94,8 +99,8 @@ const handleSignInWithEmailPassword = async (logInInfo) => {
   try {
     const res = await signInWithEmailAndPassword(
       auth,
-      logInInfo.value.email,
-      logInInfo.value.password
+      logInInfo.email,
+      logInInfo.password
     );
     if (res) {
       welcomeUser(logInInfo.email);
@@ -107,6 +112,7 @@ const handleSignInWithEmailPassword = async (logInInfo) => {
 };
 
 const handleSignInWithGoogle = async () => {
+  loading.google = true;
   try {
     const provider = new GoogleAuthProvider();
     const res = await signInWithPopup(getAuth(), provider);
@@ -117,6 +123,7 @@ const handleSignInWithGoogle = async () => {
   } catch (error) {
     errMessages(error);
   } finally {
+    loading.google = false;
   }
 };
 </script>

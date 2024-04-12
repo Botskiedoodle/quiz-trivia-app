@@ -237,7 +237,7 @@ const errMessages = (err) => {
   }
 };
 const notification = useNotification();
-const handleRegisterWithEmailPassword = async () => {
+const handleRegisterWithEmailPassword = async (signUpInfo) => {
   const auth = getAuth();
   try {
     await signUpFormRef.value?.validate((e) => {

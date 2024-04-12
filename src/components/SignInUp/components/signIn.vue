@@ -21,53 +21,59 @@
     </n-form-item>
   </n-form>
   <div v-if="errMsg">{{ errMsg }}</div>
+
   <div class="cta-container">
     <n-button
       type="primary"
       block
       secondary
       strong
-      :disabled="loading.google"
       :loading="loading.email"
+      :disabled="loading.google"
+      round
       @click="handleSignInWithEmailPassword"
     >
       Sign In
     </n-button>
+
     <n-button
       type="primary"
       block
-      secondary
       strong
+      round
       :disabled="loading.email"
       :loading="loading.google"
       @click="handleSignInWithGoogle"
     >
+      <template #icon>
+        <n-icon size="1.5rem">
+          <logo-google />
+        </n-icon>
+      </template>
       Sign In With Google
     </n-button>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, defineEmits } from "vue";
+import { ref, reactive, defineEmits, defineModel } from "vue";
 import { useRouter } from "vue-router";
 import { useNotification } from "naive-ui";
+import { LogoGoogle } from "@vicons/ionicons5";
 
 const router = useRouter();
-const loading = reactive({
-  email: false,
-  google: false
-});
+const loading = defineModel("loading");
 
 const errMsg = ref("");
 
 const logInFormRef = ref();
-const logInInfo = ref({
+const logInInfo = reactive({
   email: "",
   password: ""
 });
 
 const checkPasswordLength = (rule, value) => {
-  return value.length > 8;
+  return value.length >= 8;
 };
 
 const logInRules = {
@@ -94,7 +100,6 @@ const emit = defineEmits(["signIn", "googleSignIn"]);
 
 const handleSignInWithEmailPassword = async () => {
   try {
-    loading.google = true;
     await logInFormRef.value?.validate((e) => {
       if (!e) {
         emit("signIn", logInInfo);
@@ -104,19 +109,14 @@ const handleSignInWithEmailPassword = async () => {
     });
   } catch (error) {
     console.log(e);
-  } finally {
-    loading.google = false;
   }
 };
 
 const handleSignInWithGoogle = () => {
   try {
-    loading.google = true;
     emit("googleSignIn");
   } catch (error) {
     console.log(error);
-  } finally {
-    loading.google = false;
   }
 };
 </script>
