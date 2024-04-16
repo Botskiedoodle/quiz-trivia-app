@@ -62,13 +62,17 @@ const imageURL = computed(() => {
   ).href;
 });
 
-const inspectAchievement = ({ id, title, description, image }) => {
+const inspectAchievement = ({ id, clue, title, description, image }) => {
   let flag = checkForFlag(id);
-  if (flag === 0) return;
-  achievementModal.show = true;
+  if (flag === 0) {
+    achievementModal.description = clue;
+    achievementModal.image = "lock";
+  } else {
+    achievementModal.description = description;
+    achievementModal.image = image;
+  }
   achievementModal.title = title;
-  achievementModal.description = description;
-  achievementModal.image = image;
+  achievementModal.show = true;
 };
 
 const handleCloseModal = () => {
