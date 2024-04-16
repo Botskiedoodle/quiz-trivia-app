@@ -29,8 +29,10 @@ const props = defineProps({
 });
 
 const imageURL = computed(() => {
-  return new URL(`../assets/achievements/${props.image}.png`, import.meta.url)
-    .href;
+  return new URL(
+    `../../assets/achievements/${props.image}.png`,
+    import.meta.url
+  ).href;
 });
 </script>
 

@@ -2,9 +2,9 @@
   <div class="container">
     <p class="title">Achievements</p>
     <div class="achievements">
-      <div v-for="achievement in achievements" :key="achievement.id">
+      <div v-for="achievement in achievementBadges" :key="achievement.id">
         <achievement-badge
-          :flag="achievement.flag"
+          :flag="checkForFlag(achievement.id)"
           :image="achievement.image"
           :title="achievement.title"
           @click="inspectAchievement(achievement)"
@@ -44,10 +44,12 @@ import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import achievementBadge from "@/components/AchievementBadge/index.vue";
 import { useUserStore } from "@/store/user.js";
 import { displayConfetti } from "@/utility";
+import { achievements } from "@/constants/achievements.js";
 const isLoggedIn = ref(false);
 
 const userStore = useUserStore();
-const achievements = userStore.achievementBadges;
+const userAchievements = userStore.achievementBadges;
+const achievementBadges = achievements;
 const achievementModal = reactive({
   show: false,
   title: "",
@@ -60,7 +62,8 @@ const imageURL = computed(() => {
   ).href;
 });
 
-const inspectAchievement = ({ flag, title, description, image }) => {
+const inspectAchievement = ({ id, title, description, image }) => {
+  let flag = checkForFlag(id);
   if (flag === 0) return;
   achievementModal.show = true;
   achievementModal.title = title;
@@ -92,6 +95,17 @@ const handleSignOut = () => {
       });
     }
   });
+};
+
+const checkForFlag = (id) => {
+  for (const key in userAchievements) {
+    if (Object.hasOwnProperty.call(userAchievements, key)) {
+      const badge = userAchievements[key];
+      if (badge.id === id) {
+        return badge.flag;
+      }
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>
