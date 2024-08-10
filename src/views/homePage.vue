@@ -125,6 +125,7 @@ let auth;
 
 const isLoggedIn = ref(false);
 onMounted(() => {
+  console.log('test push')
   auth = getAuth();
   onAuthStateChanged(auth, (user) => {
     isLoggedIn.value = user ? true : false;
